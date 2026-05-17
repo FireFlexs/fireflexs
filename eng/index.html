@@ -685,15 +685,116 @@
 
   /* progress nums */
   #progress-nums { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--text3); }
+
+  /* ── MOBILE ADAPTATION ── */
+  .menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    color: var(--text);
+    font-size: 24px;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+  }
+  .sidebar-overlay {
+    display: none;
+    position: fixed;
+    top: 60px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(2px);
+    z-index: 90;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .sidebar-overlay.active {
+    display: block;
+    opacity: 1;
+  }
+
+  @media (max-width: 768px) {
+    .menu-toggle {
+      display: block;
+    }
+    .header-meta {
+      display: none;
+    }
+    .sidebar {
+      position: fixed;
+      top: 60px;
+      left: -280px;
+      bottom: 0;
+      height: calc(100vh - 60px);
+      background: var(--bg);
+      z-index: 100;
+      transition: left 0.3s ease;
+      box-shadow: 2px 0 10px rgba(0,0,0,0.5);
+    }
+    .sidebar.open {
+      left: 0;
+    }
+    main {
+      padding: 1.5rem 1.25rem;
+    }
+    .stats-grid {
+      grid-template-columns: 1fr;
+    }
+    .exam-info-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+    .home-title {
+      font-size: 32px;
+    }
+    .quiz-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+    .quiz-meta {
+      width: 100%;
+      justify-content: space-between;
+    }
+    .scoring-table th, .scoring-table td {
+      padding: 0.5rem;
+      font-size: 12px;
+    }
+    .results-stats {
+      gap: 1rem;
+    }
+    .results-actions {
+      flex-direction: column;
+    }
+    .btn-primary, .btn-secondary {
+      width: 100%;
+      text-align: center;
+    }
+    .quiz-footer {
+      flex-direction: column-reverse;
+    }
+    #next-btn, #back-home-btn {
+      width: 100%;
+    }
+    .option {
+      padding: 0.75rem 1rem;
+      font-size: 14px;
+    }
+  }
 </style>
 </head>
 <body>
 <header>
-  <div class="logo">english<span>quiz</span></div>
+  <div style="display: flex; align-items: center; gap: 1rem;">
+    <button class="menu-toggle" id="menu-toggle" onclick="toggleSidebar()">☰</button>
+    <div class="logo">english<span>quiz</span></div>
+  </div>
   <div class="header-meta">Semester Review · 12 Units</div>
 </header>
 
 <div class="app">
+  <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
   <!-- Sidebar -->
   <nav class="sidebar">
     <div class="sidebar-label">Practice Quizzes</div>
@@ -1000,7 +1101,28 @@ function goHome() {
   initHome();
 }
 
+function toggleSidebar() {
+  const sidebar = document.querySelector('.sidebar');
+  const overlay = document.getElementById('sidebar-overlay');
+  sidebar.classList.toggle('open');
+  if (sidebar.classList.contains('open')) {
+    overlay.classList.add('active');
+  } else {
+    overlay.classList.remove('active');
+  }
+}
+
+function closeSidebar() {
+  const sidebar = document.querySelector('.sidebar');
+  const overlay = document.getElementById('sidebar-overlay');
+  if (sidebar && sidebar.classList.contains('open')) {
+    sidebar.classList.remove('open');
+    overlay.classList.remove('active');
+  }
+}
+
 function startUnit(key) {
+  closeSidebar();
   state.mode = 'practice';
   state.currentUnit = key;
   state.questions = [...QUIZ_DATA[key].questions];
@@ -1029,6 +1151,7 @@ function startUnit(key) {
 }
 
 function startExam() {
+  closeSidebar();
   state.mode = 'exam';
   state.currentUnit = '__exam__';
   state.questions = [...EXAM_QUESTIONS];
@@ -1061,6 +1184,7 @@ function startExam() {
 }
 
 function startAllUnits() {
+  closeSidebar();
   const allQs = UNIT_ORDER.flatMap(key =>
     QUIZ_DATA[key].questions.map(q => ({ ...q, _unit: key }))
   );
