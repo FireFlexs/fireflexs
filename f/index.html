@@ -1,0 +1,543 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Физика 2 — квиз для подготовки</title>
+<style>
+  :root {
+    --bg: #0b1020;
+    --panel: #121a33;
+    --panel2: #182244;
+    --text: #eef2ff;
+    --muted: #b7c0dd;
+    --accent: #7c3aed;
+    --accent2: #22c55e;
+    --danger: #ef4444;
+    --border: rgba(255,255,255,.10);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    background: radial-gradient(1200px 700px at 20% 0%, #182244, var(--bg));
+    color: var(--text);
+  }
+  .wrap {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 20px;
+    display: grid;
+    gap: 16px;
+  }
+  .hero, .card {
+    background: rgba(18,26,51,.92);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    box-shadow: 0 12px 30px rgba(0,0,0,.25);
+  }
+  .hero {
+    padding: 18px 18px 14px;
+    display: grid;
+    gap: 12px;
+  }
+  h1 {
+    margin: 0;
+    font-size: clamp(24px, 4vw, 38px);
+    line-height: 1.1;
+  }
+  .sub {
+    color: var(--muted);
+    margin: 0;
+    line-height: 1.45;
+  }
+  .topbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+  }
+  .pill, .btn, select, input {
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    background: var(--panel2);
+    color: var(--text);
+    padding: 10px 14px;
+    font-size: 14px;
+  }
+  .pill {
+    display: inline-flex;
+    gap: 8px;
+    align-items: center;
+    white-space: nowrap;
+  }
+  .btn {
+    cursor: pointer;
+    transition: .2s ease;
+    user-select: none;
+  }
+  .btn:hover { transform: translateY(-1px); border-color: rgba(255,255,255,.22); }
+  .btn.primary { background: linear-gradient(135deg, var(--accent), #4f46e5); border: none; }
+  .btn.good { background: linear-gradient(135deg, var(--accent2), #16a34a); border: none; }
+  .btn.ghost { background: transparent; }
+  .grid {
+    display: grid;
+    grid-template-columns: 1.15fr .85fr;
+    gap: 16px;
+  }
+  @media (max-width: 980px) {
+    .grid { grid-template-columns: 1fr; }
+  }
+  .card {
+    padding: 16px;
+  }
+  .tabs {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+  }
+  .tab {
+    padding: 10px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text);
+    cursor: pointer;
+  }
+  .tab.active {
+    background: var(--accent);
+    border-color: transparent;
+  }
+  .meta {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+  .question {
+    font-size: 18px;
+    line-height: 1.45;
+    margin: 10px 0 14px;
+  }
+  .options {
+    display: grid;
+    gap: 10px;
+  }
+  .opt {
+    padding: 12px 14px;
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    background: rgba(255,255,255,.02);
+    cursor: pointer;
+    transition: .18s ease;
+  }
+  .opt:hover { background: rgba(255,255,255,.05); }
+  .opt.selected { border-color: rgba(124,58,237,.9); background: rgba(124,58,237,.15); }
+  .opt.correct { border-color: rgba(34,197,94,.9); background: rgba(34,197,94,.16); }
+  .opt.wrong { border-color: rgba(239,68,68,.9); background: rgba(239,68,68,.16); }
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 16px;
+  }
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0,1fr));
+    gap: 12px;
+  }
+  .stat {
+    padding: 14px;
+    border-radius: 16px;
+    background: rgba(255,255,255,.03);
+    border: 1px solid var(--border);
+  }
+  .stat .v { font-size: 28px; font-weight: 800; }
+  .stat .k { color: var(--muted); margin-top: 6px; }
+  .list {
+    display: grid;
+    gap: 10px;
+    max-height: 72vh;
+    overflow: auto;
+    padding-right: 4px;
+  }
+  .mini {
+    padding: 12px 14px;
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    background: rgba(255,255,255,.03);
+    cursor: pointer;
+  }
+  .mini.active {
+    border-color: rgba(124,58,237,.9);
+    background: rgba(124,58,237,.12);
+  }
+  .mini .t {
+    font-size: 14px;
+    color: var(--muted);
+    margin-top: 4px;
+    line-height: 1.35;
+  }
+  .feedback {
+    margin-top: 12px;
+    padding: 12px 14px;
+    border-radius: 14px;
+    background: rgba(255,255,255,.04);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    line-height: 1.45;
+    display: none;
+  }
+  .feedback.show { display: block; }
+  .small { font-size: 13px; color: var(--muted); }
+  .searchrow {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+  }
+  input[type="text"] {
+    min-width: 220px;
+    flex: 1;
+  }
+  .spacer {
+    height: 1px;
+    background: var(--border);
+    margin: 14px 0;
+  }
+  .kbd {
+    padding: 2px 7px;
+    border: 1px solid var(--border);
+    border-bottom-width: 2px;
+    border-radius: 8px;
+    background: rgba(255,255,255,.03);
+    font-size: 12px;
+    color: var(--muted);
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <section class="hero">
+    <h1>Физика 2 — квиз для подготовки</h1>
+    <p class="sub">Теория и практика разделены по вкладкам. Можно проходить вопросы по одному, смотреть результат, искать по тексту и быстро повторять перед ИК.</p>
+    <div class="topbar">
+      <span class="pill" id="countPill">Вопросов: 0</span>
+      <span class="pill" id="modePill">Режим: теория</span>
+      <button class="btn primary" id="random10">10 случайных</button>
+      <button class="btn" id="allBtn">Все вопросы</button>
+      <button class="btn good" id="checkBtn">Проверить</button>
+      <button class="btn ghost" id="resetBtn">Сбросить</button>
+    </div>
+  </section>
+
+  <div class="grid">
+    <section class="card">
+      <div class="tabs">
+        <button class="tab active" data-mode="theory">Теория</button>
+        <button class="tab" data-mode="practice">Практика</button>
+        <button class="tab" data-mode="all">Все</button>
+      </div>
+
+      <div class="searchrow">
+        <input type="text" id="search" placeholder="Поиск по вопросу или номеру..." />
+        <select id="rangeSelect">
+          <option value="current">Текущий набор</option>
+          <option value="all">Все вопросы</option>
+        </select>
+      </div>
+
+      <div id="quiz"></div>
+
+      <div class="controls">
+        <button class="btn" id="prevBtn">← Назад</button>
+        <button class="btn primary" id="nextBtn">Дальше →</button>
+        <button class="btn" id="showAnswerBtn">Показать ответ</button>
+      </div>
+
+      <div class="feedback" id="feedback"></div>
+    </section>
+
+    <aside class="card">
+      <div class="stats">
+        <div class="stat"><div class="v" id="statTotal">0</div><div class="k">всего в наборе</div></div>
+        <div class="stat"><div class="v" id="statCorrect">0</div><div class="k">верных ответов</div></div>
+        <div class="stat"><div class="v" id="statWrong">0</div><div class="k">ошибок</div></div>
+        <div class="stat"><div class="v" id="statScore">0%</div><div class="k">точность</div></div>
+      </div>
+      <div class="spacer"></div>
+      <div class="small">
+        Подсказки:<br>
+        <span class="kbd">1</span>–<span class="kbd">4</span> — выбрать вариант<br>
+        <span class="kbd">Enter</span> — проверить<br>
+        <span class="kbd">Space</span> — следующий вопрос
+      </div>
+      <div class="spacer"></div>
+      <div class="small">Слева список вопросов, справа можно быстро прыгать по ним и видеть прогресс.</div>
+      <div class="spacer"></div>
+      <div id="miniList" class="list"></div>
+    </aside>
+  </div>
+</div>
+
+<script>
+const QUESTIONS = [{"num": 1, "text": "Луч света имеет длину волны 600 нм в воздухе. Чему равна частота (10^14 Гц) этого света? (c = 3.0 × 10^8 м/с)", "options": [{"label": "a", "text": "2.0", "correct": false}, {"label": "b", "text": "3.0", "correct": false}, {"label": "c", "text": "5.0", "correct": true}, {"label": "d", "text": "6.0", "correct": false}]}, {"num": 2, "text": "Луч света меняет направление, когда падает на границу между воздухом и водой. Какое из перечисленных явлений отвечает за это?", "options": [{"label": "a", "text": "Отражение", "correct": false}, {"label": "b", "text": "Преломление", "correct": true}, {"label": "c", "text": "Дифракция", "correct": false}, {"label": "d", "text": "Интерференция", "correct": false}]}, {"num": 3, "text": "Луч света, распространяющийся в воздухе с длиной волны 600 нм, падает на стеклянный блок (n = 1.5). Чему равна длина волны света в стекле?", "options": [{"label": "a", "text": "600 нм", "correct": false}, {"label": "b", "text": "400 нм", "correct": true}, {"label": "c", "text": "900 нм", "correct": false}, {"label": "d", "text": "300 нм", "correct": false}]}, {"num": 4, "text": "Луч света, распространяющийся в воздухе с длиной волны 600 нм, падает на стеклянный блок. Чему равна скорость (10^8 м/с) луча света в стекле? (c = 3.0 × 10^8 м/с, n = 1.5)", "options": [{"label": "a", "text": "3.0", "correct": false}, {"label": "b", "text": "2.5", "correct": false}, {"label": "c", "text": "1.5", "correct": false}, {"label": "d", "text": "2.0", "correct": true}]}, {"num": 5, "text": "Луч света, распространяющийся в воздухе с длиной волны 600 нм, падает на стеклянный блок. Чему равна частота (10^14 Гц) луча света в стекле? (c = 3.0 × 10^8 м/с, n = 1.5)", "options": [{"label": "a", "text": "2.0", "correct": false}, {"label": "b", "text": "3.3", "correct": false}, {"label": "c", "text": "5.0", "correct": true}, {"label": "d", "text": "7.5", "correct": false}]}, {"num": 6, "text": "Солнечный свет падает на стеклянную призму. Какой из перечисленных цветов света преломляется меньше всего?", "options": [{"label": "a", "text": "Красный", "correct": true}, {"label": "b", "text": "Зелёный", "correct": false}, {"label": "c", "text": "Синий", "correct": false}, {"label": "d", "text": "Фиолетовый", "correct": false}]}, {"num": 7, "text": "Когда белый свет входит в стеклянную призму, он разлагается, образуя радугу. Почему одни цвета света преломляются сильнее других, создавая эту картину?", "options": [{"label": "a", "text": "Разные цвета имеют одинаковую скорость в стекле", "correct": false}, {"label": "b", "text": "Показатель преломления стекла зависит от длины волны, поэтому разные цвета распространяются в стекле с разной скоростью", "correct": true}, {"label": "c", "text": "Все цвета имеют одинаковую длину волны", "correct": false}, {"label": "d", "text": "Призма поглощает определённые цвета", "correct": false}]}, {"num": 8, "text": "Что происходит со световой волной, когда она входит в более плотную среду?", "options": [{"label": "a", "text": "Её частота увеличивается", "correct": false}, {"label": "b", "text": "Её частота уменьшается", "correct": false}, {"label": "c", "text": "Её длина волны и скорость уменьшаются, а частота остаётся неизменной", "correct": true}, {"label": "d", "text": "Её длина волны увеличивается", "correct": false}]}, {"num": 9, "text": "Луч света расширяется при прохождении через узкую щель. Какое из перечисленных явлений объясняет это?", "options": [{"label": "a", "text": "Отражение", "correct": false}, {"label": "b", "text": "Преломление", "correct": false}, {"label": "c", "text": "Дифракция", "correct": true}, {"label": "d", "text": "Поляризация", "correct": false}]}, {"num": 10, "text": "В опыте Юнга с двумя щелями наблюдался ряд светлых и тёмных полос. Какой из перечисленных принципов отвечает за это явление?", "options": [{"label": "a", "text": "Отражение", "correct": false}, {"label": "b", "text": "Интерференция", "correct": true}, {"label": "c", "text": "Преломление", "correct": false}, {"label": "d", "text": "Полное внутреннее отражение", "correct": false}]}, {"num": 11, "text": "Синий луч света падает на две узкие щели, образуя интерференционную картину на экране. Если вместо синего использовать жёлтый свет в том же опыте, как изменится интерференционная картина?", "options": [{"label": "a", "text": "Полосы сблизятся", "correct": false}, {"label": "b", "text": "Полосы раздвинутся (расстояние увеличится)", "correct": true}, {"label": "c", "text": "Полосы исчезнут", "correct": false}, {"label": "d", "text": "Изменений не произойдёт", "correct": false}]}, {"num": 12, "text": "Как изменяется интерференционная картина, создаваемая установкой с двумя щелями в воздухе, когда её погружают в воду?", "options": [{"label": "a", "text": "Расстояние между полосами увеличивается", "correct": false}, {"label": "b", "text": "Расстояние между полосами уменьшается", "correct": true}, {"label": "c", "text": "Картина исчезает", "correct": false}, {"label": "d", "text": "Изменений не происходит", "correct": false}]}, {"num": 13, "text": "Две когерентные световые волны, каждая с длиной волны λ, пересекаются на экране и интерферируют конструктивно. Дополнительный путь, пройденный одной из волн, может быть равен какой из этих величин?", "options": [{"label": "a", "text": "λ/2", "correct": false}, {"label": "b", "text": "λ/4", "correct": false}, {"label": "c", "text": "2λ", "correct": true}, {"label": "d", "text": "3λ/2", "correct": false}]}, {"num": 14, "text": "Когда расстояние между щелями в установке с двумя щелями увеличивают, что происходит с интерференционной картиной?", "options": [{"label": "a", "text": "Полосы сближаются", "correct": true}, {"label": "b", "text": "Полосы раздвигаются", "correct": false}, {"label": "c", "text": "Картина исчезает", "correct": false}, {"label": "d", "text": "Изменений не происходит", "correct": false}]}, {"num": 15, "text": "Когда расстояние между щелями в опыте с двумя щелями уменьшают вдвое, расстояние между двумя соседними максимумами _____.", "options": [{"label": "a", "text": "уменьшается вдвое", "correct": false}, {"label": "b", "text": "увеличивается вдвое", "correct": true}, {"label": "c", "text": "не изменяется", "correct": false}, {"label": "d", "text": "уменьшается в четыре раза", "correct": false}]}, {"num": 16, "text": "Свет, падающий на тонкую плёнку, частично отражается от плёнки и частично проходит сквозь неё. Какова разность фаз между отражённой и прошедшей волнами?", "options": [{"label": "a", "text": "180° (π) для отражённой волны на границе с более высоким показателем преломления", "correct": true}, {"label": "b", "text": "0°", "correct": false}, {"label": "c", "text": "90°", "correct": false}, {"label": "d", "text": "270°", "correct": false}]}, {"num": 17, "text": "Когда лазерный луч проходит через круглое отверстие, наблюдается набор светлых и тёмных концентрических колец. Когда диаметр отверстия увеличивают, что происходит с интерференционной картиной?", "options": [{"label": "a", "text": "Кольца сближаются (картина сжимается)", "correct": true}, {"label": "b", "text": "Кольца раздвигаются", "correct": false}, {"label": "c", "text": "Картина исчезает", "correct": false}, {"label": "d", "text": "Изменений не происходит", "correct": false}]}, {"num": 18, "text": "Луч света, распространяющийся в воде, входит в воздух. Какова разность фаз между падающей и прошедшей волнами?", "options": [{"label": "a", "text": "0° (нет изменения фазы при прохождении)", "correct": true}, {"label": "b", "text": "90°", "correct": false}, {"label": "c", "text": "180°", "correct": false}, {"label": "d", "text": "270°", "correct": false}]}, {"num": 19, "text": "Пучок когерентного света с длиной волны 600 нм падает на дифракционную решётку с расстоянием между щелями 1.8 мкм. Какое максимальное число спектральных порядков можно наблюдать на экране?", "options": [{"label": "a", "text": "2", "correct": false}, {"label": "b", "text": "3", "correct": true}, {"label": "c", "text": "4", "correct": false}, {"label": "d", "text": "6", "correct": false}]}, {"num": 20, "text": "Какое из перечисленных явлений подтверждает волновую теорию света?", "options": [{"label": "a", "text": "Фотоэлектрический эффект", "correct": false}, {"label": "b", "text": "Интерференция", "correct": true}, {"label": "c", "text": "Эффект Комптона", "correct": false}, {"label": "d", "text": "Излучение абсолютно чёрного тела", "correct": false}]}, {"num": 21, "text": "Две когерентные световые волны с длиной волны 400 нм пересекаются на экране и интерферируют деструктивно. Разность пройденных волнами путей может быть равна какой из перечисленных величин?", "options": [{"label": "a", "text": "400 нм", "correct": false}, {"label": "b", "text": "800 нм", "correct": false}, {"label": "c", "text": "600 нм", "correct": true}, {"label": "d", "text": "1200 нм", "correct": false}]}, {"num": 22, "text": "Студент поставил два опыта с двумя щелями: один с красным светом, другой с зелёным. Студент хочет сделать так, чтобы расстояние между максимумами было одинаковым для красного и зелёного света. Какое из перечисленных изменений может это обеспечить?", "options": [{"label": "a", "text": "Уменьшить расстояние между щелями для красного света (или увеличить для зелёного)", "correct": true}, {"label": "b", "text": "Использовать одинаковое расстояние между щелями для обоих", "correct": false}, {"label": "c", "text": "Увеличить расстояние между щелями для красного света", "correct": false}, {"label": "d", "text": "Придвинуть экран для зелёного света ближе", "correct": false}]}, {"num": 23, "text": "Какое из перечисленных упорядочений электромагнитного излучения по возрастанию частоты верно?", "options": [{"label": "a", "text": "Гамма, рентген, УФ, видимый, ИК, микроволны, радио", "correct": false}, {"label": "b", "text": "Радио, микроволны, ИК, видимый, УФ, рентген, гамма", "correct": true}, {"label": "c", "text": "Видимый, ИК, микроволны, радио, УФ, рентген, гамма", "correct": false}, {"label": "d", "text": "Радио, ИК, микроволны, видимый, УФ, гамма, рентген", "correct": false}]}, {"num": 24, "text": "Какие из перечисленных электромагнитных волн могут дифрагировать на здании?", "options": [{"label": "a", "text": "Радиоволны", "correct": true}, {"label": "b", "text": "Видимый свет", "correct": false}, {"label": "c", "text": "Рентгеновские лучи", "correct": false}, {"label": "d", "text": "Гамма-лучи", "correct": false}]}, {"num": 25, "text": "Неполяризованный свет проходит через два поляроида, ориентированных так, что их оси поляризации повёрнуты на 60° друг относительно друга. Если интенсивность падающего света равна I0, какова интенсивность прошедшего света?", "options": [{"label": "a", "text": "I0/2", "correct": false}, {"label": "b", "text": "I0/4", "correct": false}, {"label": "c", "text": "I0/8", "correct": true}, {"label": "d", "text": "3I0/8", "correct": false}]}, {"num": 26, "text": "Какое из перечисленных явлений может разложить белый свет на составляющие его цвета?", "options": [{"label": "a", "text": "Отражение", "correct": false}, {"label": "b", "text": "Дисперсия", "correct": true}, {"label": "c", "text": "Поляризация", "correct": false}, {"label": "d", "text": "Полное внутреннее отражение", "correct": false}]}, {"num": 27, "text": "Два источника излучения направлены на два датчика в вакууме, каждый на расстоянии 5 м. Один испускает рентгеновские лучи, другой — инфракрасное излучение. Их включают одновременно. Какой сценарий объясняет, когда датчики получат свой сигнал?", "options": [{"label": "a", "text": "Оба сигнала приходят одновременно, так как все ЭМ-волны распространяются в вакууме со скоростью света", "correct": true}, {"label": "b", "text": "Рентгеновский луч приходит первым", "correct": false}, {"label": "c", "text": "Инфракрасный приходит первым", "correct": false}, {"label": "d", "text": "Ни один сигнал не приходит", "correct": false}]}, {"num": 28, "text": "Электроны разгоняются до максимальной скорости v в рентгеновской трубке приложенным напряжением V0. Какова максимальная скорость, если напряжение увеличить в четыре раза?", "options": [{"label": "a", "text": "v", "correct": false}, {"label": "b", "text": "2v", "correct": true}, {"label": "c", "text": "4v", "correct": false}, {"label": "d", "text": "v/2", "correct": false}]}, {"num": 29, "text": "Какой из перечисленных цветов указывает на объект с наименьшей температурой?", "options": [{"label": "a", "text": "Красный", "correct": true}, {"label": "b", "text": "Жёлтый", "correct": false}, {"label": "c", "text": "Белый", "correct": false}, {"label": "d", "text": "Синий", "correct": false}]}, {"num": 30, "text": "Какое свойство имеет абсолютно чёрное тело (излучатель)?", "options": [{"label": "a", "text": "Оно идеально поглощает и испускает все длины волн излучения", "correct": true}, {"label": "b", "text": "Оно только отражает свет", "correct": false}, {"label": "c", "text": "Оно испускает только одну длину волны", "correct": false}, {"label": "d", "text": "Оно не испускает излучения", "correct": false}]}, {"num": 31, "text": "Какой из перечисленных фотонов обладает наибольшей энергией?", "options": [{"label": "a", "text": "Радио", "correct": false}, {"label": "b", "text": "Инфракрасный", "correct": false}, {"label": "c", "text": "Видимый", "correct": false}, {"label": "d", "text": "Ультрафиолетовый", "correct": true}]}, {"num": 32, "text": "Какое расхождение между экспериментом и теорией помогло Максу Планку прийти к квантовой теории?", "options": [{"label": "a", "text": "Ультрафиолетовая катастрофа в излучении абсолютно чёрного тела", "correct": true}, {"label": "b", "text": "Фотоэлектрический эффект", "correct": false}, {"label": "c", "text": "Эффект Комптона", "correct": false}, {"label": "d", "text": "Опыт с двумя щелями", "correct": false}]}, {"num": 33, "text": "Энергия фотона зависит от _____.", "options": [{"label": "a", "text": "его частоты", "correct": true}, {"label": "b", "text": "его амплитуды", "correct": false}, {"label": "c", "text": "его интенсивности", "correct": false}, {"label": "d", "text": "среды, в которой он распространяется", "correct": false}]}, {"num": 34, "text": "Как изменится энергия фотона, если длину волны удвоить?", "options": [{"label": "a", "text": "Она уменьшится вдвое", "correct": true}, {"label": "b", "text": "Она удвоится", "correct": false}, {"label": "c", "text": "Она увеличится в четыре раза", "correct": false}, {"label": "d", "text": "Она останется неизменной", "correct": false}]}, {"num": 35, "text": "Фотоэлектрический эффект объясняет _____.", "options": [{"label": "a", "text": "корпускулярную природу света", "correct": true}, {"label": "b", "text": "волновую природу света", "correct": false}, {"label": "c", "text": "интерференцию света", "correct": false}, {"label": "d", "text": "дифракцию света", "correct": false}]}, {"num": 36, "text": "Кинетическая энергия фотоэлектронов зависит от _____.", "options": [{"label": "a", "text": "частоты падающего света", "correct": true}, {"label": "b", "text": "интенсивности падающего света", "correct": false}, {"label": "c", "text": "числа фотонов", "correct": false}, {"label": "d", "text": "площади металла", "correct": false}]}, {"num": 37, "text": "Запирающий потенциал фотоэлектронов зависит от чего из перечисленного?", "options": [{"label": "a", "text": "От частоты падающего света", "correct": true}, {"label": "b", "text": "От интенсивности падающего света", "correct": false}, {"label": "c", "text": "От числа падающих фотонов", "correct": false}, {"label": "d", "text": "От размера электрода", "correct": false}]}, {"num": 38, "text": "Какая из перечисленных формул выражает фотоэлектрический эффект?", "options": [{"label": "a", "text": "hf = W₀ + KEmax", "correct": true}, {"label": "b", "text": "E = mc²", "correct": false}, {"label": "c", "text": "F = ma", "correct": false}, {"label": "d", "text": "p = mv", "correct": false}]}, {"num": 39, "text": "Какая из перечисленных формул является формулой импульса фотона?", "options": [{"label": "a", "text": "p = h/λ", "correct": true}, {"label": "b", "text": "p = mv", "correct": false}, {"label": "c", "text": "p = hf", "correct": false}, {"label": "d", "text": "p = E/c²", "correct": false}]}, {"num": 40, "text": "Как изменится импульс фотона, если длину волны уменьшить вдвое? Он _____.", "options": [{"label": "a", "text": "удваивается", "correct": true}, {"label": "b", "text": "уменьшается вдвое", "correct": false}, {"label": "c", "text": "увеличивается в четыре раза", "correct": false}, {"label": "d", "text": "остаётся неизменным", "correct": false}]}, {"num": 41, "text": "Какое из перечисленных явлений даёт лучшее доказательство того, что свет может обладать корпускулярными свойствами?", "options": [{"label": "a", "text": "Фотоэлектрический эффект", "correct": true}, {"label": "b", "text": "Интерференция", "correct": false}, {"label": "c", "text": "Дифракция", "correct": false}, {"label": "d", "text": "Поляризация", "correct": false}]}, {"num": 42, "text": "Какое из перечисленных явлений даёт лучшее доказательство того, что частицы могут обладать волновыми свойствами?", "options": [{"label": "a", "text": "Дифракция электронов", "correct": true}, {"label": "b", "text": "Фотоэлектрический эффект", "correct": false}, {"label": "c", "text": "Излучение абсолютно чёрного тела", "correct": false}, {"label": "d", "text": "Эффект Комптона", "correct": false}]}, {"num": 43, "text": "В модели Бора, когда электрон переходит с орбиты n = 1 (радиус r1) на орбиту n = 3, чему равен его новый радиус орбиты по отношению к r1?", "options": [{"label": "a", "text": "3", "correct": false}, {"label": "b", "text": "6", "correct": false}, {"label": "c", "text": "9", "correct": true}, {"label": "d", "text": "27", "correct": false}]}, {"num": 44, "text": "В модели Бора, когда электрон переходит с орбиты n = 1 (энергия E1) на орбиту n = 4, чему равна его новая энергия по отношению к E1?", "options": [{"label": "a", "text": "1/4", "correct": false}, {"label": "b", "text": "1/16", "correct": true}, {"label": "c", "text": "1/8", "correct": false}, {"label": "d", "text": "1/32", "correct": false}]}, {"num": 45, "text": "Согласно теории электромагнетизма Максвелла, электрон, вращающийся вокруг ядра, должен _____.", "options": [{"label": "a", "text": "излучать энергию и по спирали падать на ядро", "correct": true}, {"label": "b", "text": "оставаться на стабильной орбите вечно", "correct": false}, {"label": "c", "text": "непрерывно набирать энергию", "correct": false}, {"label": "d", "text": "остановиться", "correct": false}]}, {"num": 46, "text": "Какую из перечисленных формул можно использовать для определения длины волны де Бройля?", "options": [{"label": "a", "text": "λ = h/p", "correct": true}, {"label": "b", "text": "λ = hf", "correct": false}, {"label": "c", "text": "λ = c/f", "correct": false}, {"label": "d", "text": "λ = p/h", "correct": false}]}, {"num": 47, "text": "Если все перечисленные объекты движутся с одинаковой скоростью, у какого из них будет наибольшая длина волны де Бройля?", "options": [{"label": "a", "text": "У объекта с наименьшей массой", "correct": true}, {"label": "b", "text": "У объекта с наибольшей массой", "correct": false}, {"label": "c", "text": "У объекта с наибольшим зарядом", "correct": false}, {"label": "d", "text": "У всех одинаковая длина волны", "correct": false}]}, {"num": 48, "text": "Электрон, разогнанный из состояния покоя разностью потенциалов 600 В, имеет длину волны де Бройля λ. Какой была бы длина волны, если бы разность потенциалов составляла 150 В?", "options": [{"label": "a", "text": "λ/2", "correct": false}, {"label": "b", "text": "2λ", "correct": true}, {"label": "c", "text": "4λ", "correct": false}, {"label": "d", "text": "λ/4", "correct": false}]}, {"num": 49, "text": "Утверждение «Чтобы понять данный эксперимент, мы должны использовать либо волновую, либо корпускулярную теорию, но не обе одновременно» называется?", "options": [{"label": "a", "text": "дополнительность (принцип дополнительности)", "correct": true}, {"label": "b", "text": "суперпозиция", "correct": false}, {"label": "c", "text": "неопределённость", "correct": false}, {"label": "d", "text": "запутанность", "correct": false}]}, {"num": 50, "text": "Неизвестный химический элемент задаётся формулой с индексами Z и A. Как называется индекс Z?", "options": [{"label": "a", "text": "Атомный номер", "correct": true}, {"label": "b", "text": "Массовое число", "correct": false}, {"label": "c", "text": "Число нейтронов", "correct": false}, {"label": "d", "text": "Номер изотопа", "correct": false}]}, {"num": 51, "text": "Неизвестный химический элемент задаётся формулой с индексами Z и A. Как называется индекс A?", "options": [{"label": "a", "text": "Массовое число", "correct": true}, {"label": "b", "text": "Атомный номер", "correct": false}, {"label": "c", "text": "Число протонов", "correct": false}, {"label": "d", "text": "Число электронов", "correct": false}]}, {"num": 52, "text": "Атомный номер эквивалентен чему из перечисленного?", "options": [{"label": "a", "text": "Числу протонов", "correct": true}, {"label": "b", "text": "Числу нейтронов", "correct": false}, {"label": "c", "text": "Числу нуклонов", "correct": false}, {"label": "d", "text": "Числу протонов плюс нейтронов", "correct": false}]}, {"num": 53, "text": "Массовое число атома эквивалентно чему из перечисленного?", "options": [{"label": "a", "text": "Числу протонов плюс нейтронов", "correct": true}, {"label": "b", "text": "Только числу протонов", "correct": false}, {"label": "c", "text": "Только числу нейтронов", "correct": false}, {"label": "d", "text": "Числу электронов", "correct": false}]}, {"num": 54, "text": "Какая из перечисленных частиц имеет наименьшую массу?", "options": [{"label": "a", "text": "Электрон", "correct": true}, {"label": "b", "text": "Протон", "correct": false}, {"label": "c", "text": "Нейтрон", "correct": false}, {"label": "d", "text": "Альфа-частица", "correct": false}]}, {"num": 55, "text": "Какое из перечисленных утверждений о массе атома верно?", "options": [{"label": "a", "text": "Почти вся масса сосредоточена в ядре", "correct": true}, {"label": "b", "text": "Масса распределена равномерно", "correct": false}, {"label": "c", "text": "Большая часть массы находится в электронах", "correct": false}, {"label": "d", "text": "Масса находится в электронном облаке", "correct": false}]}, {"num": 56, "text": "Какая из перечисленных формул верна для числа нейтронов в ядре?", "options": [{"label": "a", "text": "N = A − Z", "correct": true}, {"label": "b", "text": "N = A + Z", "correct": false}, {"label": "c", "text": "N = Z − A", "correct": false}, {"label": "d", "text": "N = A × Z", "correct": false}]}, {"num": 57, "text": "Сколько электронов в нейтральном атоме?", "options": [{"label": "a", "text": "Равно атомному номеру Z", "correct": true}, {"label": "b", "text": "Равно массовому числу A", "correct": false}, {"label": "c", "text": "Равно A − Z", "correct": false}, {"label": "d", "text": "Равно A + Z", "correct": false}]}, {"num": 58, "text": "Сколько нуклонов в атоме?", "options": [{"label": "a", "text": "Равно массовому числу A", "correct": true}, {"label": "b", "text": "Равно атомному номеру Z", "correct": false}, {"label": "c", "text": "Равно A − Z", "correct": false}, {"label": "d", "text": "Равно числу электронов", "correct": false}]}, {"num": 59, "text": "Сколько нейтронов в атоме?", "options": [{"label": "a", "text": "A − Z", "correct": true}, {"label": "b", "text": "A + Z", "correct": false}, {"label": "c", "text": "Z", "correct": false}, {"label": "d", "text": "A", "correct": false}]}, {"num": 60, "text": "Сколько протонов в атоме?", "options": [{"label": "a", "text": "Равно атомному номеру Z", "correct": true}, {"label": "b", "text": "Равно массовому числу A", "correct": false}, {"label": "c", "text": "Равно A − Z", "correct": false}, {"label": "d", "text": "Равно A + Z", "correct": false}]}, {"num": 61, "text": "Сколько протонов в атоме (определяемом его атомным номером)?", "options": [{"label": "a", "text": "Равно Z", "correct": true}, {"label": "b", "text": "Равно A", "correct": false}, {"label": "c", "text": "Равно N", "correct": false}, {"label": "d", "text": "Равно A + Z", "correct": false}]}, {"num": 62, "text": "Сколько протонов в атоме (определяемом его атомным номером)?", "options": [{"label": "a", "text": "Равно Z", "correct": true}, {"label": "b", "text": "Равно массовому числу", "correct": false}, {"label": "c", "text": "Равно числу нейтронов", "correct": false}, {"label": "d", "text": "Ноль", "correct": false}]}, {"num": 63, "text": "Какой закон Эрнест Резерфорд использовал для оценки размера ядра?", "options": [{"label": "a", "text": "Закон Кулона (электростатическое рассеяние альфа-частиц)", "correct": true}, {"label": "b", "text": "Закон всемирного тяготения Ньютона", "correct": false}, {"label": "c", "text": "Закон Ома", "correct": false}, {"label": "d", "text": "Закон Фарадея", "correct": false}]}, {"num": 64, "text": "Почему ядерные энергетические уровни сложнее электронных энергетических уровней?", "options": [{"label": "a", "text": "Ядерная (сильная) сила сложнее и затрагивает как протоны, так и нейтроны", "correct": true}, {"label": "b", "text": "В ядре меньше частиц", "correct": false}, {"label": "c", "text": "Электроны тяжелее", "correct": false}, {"label": "d", "text": "Ядерные силы проще", "correct": false}]}, {"num": 65, "text": "Какое из перечисленных утверждений о ядерной силе верно?", "options": [{"label": "a", "text": "Она короткодействующая и сильнее электростатической силы на ядерных расстояниях", "correct": true}, {"label": "b", "text": "Она дальнодействующая", "correct": false}, {"label": "c", "text": "Она слабее гравитации", "correct": false}, {"label": "d", "text": "Она действует только на электроны", "correct": false}]}, {"num": 66, "text": "Какая сила отвечает за радиоактивный распад ядра?", "options": [{"label": "a", "text": "Слабое ядерное взаимодействие", "correct": true}, {"label": "b", "text": "Сильное ядерное взаимодействие", "correct": false}, {"label": "c", "text": "Электромагнитное взаимодействие", "correct": false}, {"label": "d", "text": "Гравитация", "correct": false}]}, {"num": 67, "text": "Изотопы элемента имеют _____.", "options": [{"label": "a", "text": "одинаковое число протонов, но разное число нейтронов", "correct": true}, {"label": "b", "text": "одинаковое число нейтронов, но разное число протонов", "correct": false}, {"label": "c", "text": "одинаковое массовое число", "correct": false}, {"label": "d", "text": "разные атомные номера", "correct": false}]}, {"num": 68, "text": "Какие две силы наблюдаются только в ядре? Выберите два ответа.", "options": [{"label": "a", "text": "Сильное ядерное взаимодействие", "correct": true}, {"label": "b", "text": "Слабое ядерное взаимодействие", "correct": true}, {"label": "c", "text": "Электромагнитное взаимодействие", "correct": false}, {"label": "d", "text": "Гравитация", "correct": false}]}, {"num": 69, "text": "В контексте ядерной физики энергия связи — это _____.", "options": [{"label": "a", "text": "энергия, необходимая для разделения ядра на отдельные нуклоны", "correct": true}, {"label": "b", "text": "энергия, выделяющаяся при удалении электрона", "correct": false}, {"label": "c", "text": "кинетическая энергия ядра", "correct": false}, {"label": "d", "text": "энергия фотона", "correct": false}]}, {"num": 70, "text": "Если mH — масса атома водорода, mn — масса нейтрона, а M — атомная масса, какая формула выражает дефект массы (массы в а.е.м.)?", "options": [{"label": "a", "text": "Δm = Z·mH + (A−Z)·mn − M", "correct": true}, {"label": "b", "text": "Δm = M − Z·mH − (A−Z)·mn", "correct": false}, {"label": "c", "text": "Δm = Z·mn + (A−Z)·mH − M", "correct": false}, {"label": "d", "text": "Δm = M + Z·mH + (A−Z)·mn", "correct": false}]}, {"num": 71, "text": "Когда нуклоны образуют стабильное ядро, энергия связи _____.", "options": [{"label": "a", "text": "выделяется", "correct": true}, {"label": "b", "text": "поглощается", "correct": false}, {"label": "c", "text": "не изменяется", "correct": false}, {"label": "d", "text": "создаётся из ничего", "correct": false}]}, {"num": 72, "text": "Когда ядро разделяют на составляющие, энергия _____.", "options": [{"label": "a", "text": "поглощается (требуется)", "correct": true}, {"label": "b", "text": "выделяется", "correct": false}, {"label": "c", "text": "не изменяется", "correct": false}, {"label": "d", "text": "уничтожается", "correct": false}]}, {"num": 73, "text": "Изотоп с высокой энергией связи на нуклон _____.", "options": [{"label": "a", "text": "очень стабилен", "correct": true}, {"label": "b", "text": "очень нестабилен", "correct": false}, {"label": "c", "text": "быстро распадается", "correct": false}, {"label": "d", "text": "не имеет нуклонов", "correct": false}]}, {"num": 74, "text": "Почему у более тяжёлых ядер отношение числа нейтронов к числу протонов больше, чем у более лёгких ядер?", "options": [{"label": "a", "text": "Дополнительные нейтроны добавляют притяжение сильного взаимодействия, не добавляя электростатического отталкивания, помогая противостоять отталкиванию протонов", "correct": true}, {"label": "b", "text": "Нейтроны отталкивают друг друга", "correct": false}, {"label": "c", "text": "Протоны притягиваются друг к другу электростатически", "correct": false}, {"label": "d", "text": "Нейтроны имеют заряд", "correct": false}]}, {"num": 75, "text": "Что из перечисленного является альфа-частицей?", "options": [{"label": "a", "text": "Ядро гелия (2 протона, 2 нейтрона)", "correct": true}, {"label": "b", "text": "Электрон", "correct": false}, {"label": "c", "text": "Фотон", "correct": false}, {"label": "d", "text": "Протон", "correct": false}]}, {"num": 76, "text": "Что из перечисленного является бета-частицей?", "options": [{"label": "a", "text": "Электрон (или позитрон)", "correct": true}, {"label": "b", "text": "Ядро гелия", "correct": false}, {"label": "c", "text": "Фотон", "correct": false}, {"label": "d", "text": "Нейтрон", "correct": false}]}, {"num": 77, "text": "Что из перечисленного является гамма-частицей?", "options": [{"label": "a", "text": "Высокоэнергетический фотон", "correct": true}, {"label": "b", "text": "Электрон", "correct": false}, {"label": "c", "text": "Ядро гелия", "correct": false}, {"label": "d", "text": "Протон", "correct": false}]}, {"num": 78, "text": "Что из перечисленного верно для гамма-луча?", "options": [{"label": "a", "text": "Это высокоэнергетический электромагнитный фотон без заряда и без массы", "correct": true}, {"label": "b", "text": "У него положительный заряд", "correct": false}, {"label": "c", "text": "Это ядро гелия", "correct": false}, {"label": "d", "text": "Это электрон", "correct": false}]}, {"num": 79, "text": "Какой тип излучения задерживается листом бумаги?", "options": [{"label": "a", "text": "Альфа", "correct": true}, {"label": "b", "text": "Бета", "correct": false}, {"label": "c", "text": "Гамма", "correct": false}, {"label": "d", "text": "Рентгеновское", "correct": false}]}, {"num": 80, "text": "Какие два из перечисленных процессов изменяют атомный номер ядра?", "options": [{"label": "a", "text": "Альфа-распад", "correct": true}, {"label": "b", "text": "Бета-распад", "correct": true}, {"label": "c", "text": "Гамма-излучение", "correct": false}, {"label": "d", "text": "Испускание нейтрона", "correct": false}]}, {"num": 81, "text": "Какой элемент пропущен в уравнении распада (альфа-распад, A уменьшается на 4, Z на 2)?", "options": [{"label": "a", "text": "Дочернее ядро с Z−2 и A−4", "correct": true}, {"label": "b", "text": "Ядро с Z+2, A+4", "correct": false}, {"label": "c", "text": "Неизменное ядро", "correct": false}, {"label": "d", "text": "Только фотон", "correct": false}]}, {"num": 82, "text": "Какой элемент пропущен в уравнении распада (бета-распад, Z увеличивается на 1)?", "options": [{"label": "a", "text": "Дочернее ядро с Z+1 и тем же A", "correct": true}, {"label": "b", "text": "Ядро с Z−1", "correct": false}, {"label": "c", "text": "Неизменное ядро", "correct": false}, {"label": "d", "text": "Альфа-частица", "correct": false}]}, {"num": 83, "text": "Образец радиоактивного элемента массой 100 г имеет период полураспада 5 дней. Сколько граммов останется через 15 дней?", "options": [{"label": "a", "text": "50 г", "correct": false}, {"label": "b", "text": "25 г", "correct": false}, {"label": "c", "text": "12.5 г", "correct": true}, {"label": "d", "text": "6.25 г", "correct": false}]}, {"num": 84, "text": "Реакция, при которой выделяется больше энергии, чем затрачивается, называется _____.", "options": [{"label": "a", "text": "экзотермической (экзоэнергетической)", "correct": true}, {"label": "b", "text": "эндотермической", "correct": false}, {"label": "c", "text": "изотермической", "correct": false}, {"label": "d", "text": "адиабатической", "correct": false}]}, {"num": 85, "text": "Реакция (тяжёлое ядро расщепляется + выделяются 3 нейтрона) называется _____.", "options": [{"label": "a", "text": "ядерным делением", "correct": true}, {"label": "b", "text": "ядерным синтезом", "correct": false}, {"label": "c", "text": "альфа-распадом", "correct": false}, {"label": "d", "text": "бета-распадом", "correct": false}]}, {"num": 86, "text": "Реакция (лёгкие ядра объединяются в более тяжёлое) называется _____.", "options": [{"label": "a", "text": "ядерным синтезом", "correct": true}, {"label": "b", "text": "ядерным делением", "correct": false}, {"label": "c", "text": "бета-распадом", "correct": false}, {"label": "d", "text": "гамма-излучением", "correct": false}]}, {"num": 87, "text": "Какие две из перечисленных величин сохраняются в ядерной реакции?", "options": [{"label": "a", "text": "Заряд (атомный номер)", "correct": true}, {"label": "b", "text": "Массовое число (число нуклонов)", "correct": true}, {"label": "c", "text": "Только число нейтронов", "correct": false}, {"label": "d", "text": "Только число электронов", "correct": false}]}, {"num": 88, "text": "Расстояние между двумя щелями в опыте Юнга равно 1 мм. Расстояние до экрана 3 м. Расстояние между максимумами 1.5 мм. Определите длину волны (мкм) света.", "options": [{"label": "a", "text": "0.5", "correct": true}, {"label": "b", "text": "0.6", "correct": false}, {"label": "c", "text": "0.45", "correct": false}, {"label": "d", "text": "0.75", "correct": false}]}, {"num": 89, "text": "Если постоянная решётки d = 2 мкм, определите наивысший порядок спектра для жёлтой линии натрия (λ = 529 нм)?", "options": [{"label": "a", "text": "2", "correct": false}, {"label": "b", "text": "3", "correct": true}, {"label": "c", "text": "4", "correct": false}, {"label": "d", "text": "5", "correct": false}]}, {"num": 90, "text": "Нормальный пучок белого света падает на мыльную плёнку (n = 1.35). Какова минимальная толщина плёнки, если в отражённом свете она выглядит зелёной (λ = 0.54 мкм)?", "options": [{"label": "a", "text": "0.1 мкм", "correct": true}, {"label": "b", "text": "0.2 мкм", "correct": false}, {"label": "c", "text": "0.27 мкм", "correct": false}, {"label": "d", "text": "0.05 мкм", "correct": false}]}, {"num": 91, "text": "Расстояние от щелей до экрана в опыте Юнга равно 1.5 м. Определите расстояние между щелями (мм), если 8 полос укладываются в 1 см. Длина волны 0.6 мкм.", "options": [{"label": "a", "text": "0.72", "correct": true}, {"label": "b", "text": "0.5", "correct": false}, {"label": "c", "text": "1.0", "correct": false}, {"label": "d", "text": "0.36", "correct": false}]}, {"num": 92, "text": "Параллельный пучок монохроматического света (длина волны λ) падает на щель шириной 3√2·λ. Под каким углом наблюдается третий дифракционный минимум?", "options": [{"label": "a", "text": "45°", "correct": true}, {"label": "b", "text": "30°", "correct": false}, {"label": "c", "text": "60°", "correct": false}, {"label": "d", "text": "90°", "correct": false}]}, {"num": 93, "text": "Период дифракционной решётки d = 5 мкм. Определите число главных максимумов, наблюдаемых для света с длиной волны 700 нм.", "options": [{"label": "a", "text": "7", "correct": false}, {"label": "b", "text": "13", "correct": false}, {"label": "c", "text": "15", "correct": true}, {"label": "d", "text": "14", "correct": false}]}, {"num": 94, "text": "Радиус кривизны плоско-выпуклой линзы R = 4 м. Чему равна длина волны λ (нм), если радиус пятого тёмного кольца в отражённом свете r5 = 3.6 мм?", "options": [{"label": "a", "text": "648", "correct": true}, {"label": "b", "text": "540", "correct": false}, {"label": "c", "text": "600", "correct": false}, {"label": "d", "text": "720", "correct": false}]}, {"num": 95, "text": "С какой скоростью (км/с) распространяется свет в стекле, если показатель преломления равен 1.5? (c = 3×10^8 м/с)", "options": [{"label": "a", "text": "200000", "correct": true}, {"label": "b", "text": "300000", "correct": false}, {"label": "c", "text": "150000", "correct": false}, {"label": "d", "text": "450000", "correct": false}]}, {"num": 96, "text": "Масса фотона видимого света равна 6.62×10^-36 кг. Определите частоту. (h = 6.62×10^-34 Дж·с; c = 3×10^8 м/с)", "options": [{"label": "a", "text": "9×10^14 Гц", "correct": true}, {"label": "b", "text": "6×10^14 Гц", "correct": false}, {"label": "c", "text": "5×10^14 Гц", "correct": false}, {"label": "d", "text": "3×10^14 Гц", "correct": false}]}, {"num": 97, "text": "Определите импульс фотона, соответствующего длине волны 331 нм. (h = 6.62×10^-34 Дж·с)", "options": [{"label": "a", "text": "2×10^-27 кг·м/с", "correct": true}, {"label": "b", "text": "1×10^-27 кг·м/с", "correct": false}, {"label": "c", "text": "3.3×10^-27 кг·м/с", "correct": false}, {"label": "d", "text": "6.62×10^-27 кг·м/с", "correct": false}]}, {"num": 98, "text": "Красная граница фотоэффекта для металла равна λ0 = 331 нм. Найдите минимальную энергию фотона (Дж). (h = 6.62×10^-34 Дж·с; c = 3×10^8 м/с)", "options": [{"label": "a", "text": "6×10^-19 Дж", "correct": true}, {"label": "b", "text": "3×10^-19 Дж", "correct": false}, {"label": "c", "text": "9×10^-19 Дж", "correct": false}, {"label": "d", "text": "1.2×10^-18 Дж", "correct": false}]}, {"num": 99, "text": "Красная граница фотоэффекта для металла равна λ0 = 221 нм. Найдите минимальную энергию фотона (Дж).", "options": [{"label": "a", "text": "9×10^-19 Дж", "correct": true}, {"label": "b", "text": "6×10^-19 Дж", "correct": false}, {"label": "c", "text": "3×10^-19 Дж", "correct": false}, {"label": "d", "text": "1.2×10^-18 Дж", "correct": false}]}, {"num": 100, "text": "Изолированный железный шар освещается УФ-лучами с длиной волны 0.132 мкм. Работа выхода A = 1.5 эВ. Определите максимальный потенциал (В), до которого зарядится шар. (e = 1.6×10^-19 Кл)", "options": [{"label": "a", "text": "7.9 В", "correct": true}, {"label": "b", "text": "9.4 В", "correct": false}, {"label": "c", "text": "5.0 В", "correct": false}, {"label": "d", "text": "1.5 В", "correct": false}]}, {"num": 101, "text": "Если красная граница фотоэффекта равна 300 нм, определите работу выхода для натрия (Дж).", "options": [{"label": "a", "text": "6.62×10^-19 Дж", "correct": true}, {"label": "b", "text": "3×10^-19 Дж", "correct": false}, {"label": "c", "text": "9×10^-19 Дж", "correct": false}, {"label": "d", "text": "1.2×10^-18 Дж", "correct": false}]}, {"num": 102, "text": "Найдите энергию (Дж) фотона, если его длина волны λ = 6 пм.", "options": [{"label": "a", "text": "3.31×10^-14 Дж", "correct": true}, {"label": "b", "text": "6.62×10^-14 Дж", "correct": false}, {"label": "c", "text": "1.1×10^-14 Дж", "correct": false}, {"label": "d", "text": "3.31×10^-17 Дж", "correct": false}]}, {"num": 103, "text": "Найдите массу (кг) фотона, если его длина волны λ = 6.63 пм.", "options": [{"label": "a", "text": "3.33×10^-31 кг", "correct": true}, {"label": "b", "text": "6.62×10^-31 кг", "correct": false}, {"label": "c", "text": "1.1×10^-31 кг", "correct": false}, {"label": "d", "text": "9.1×10^-31 кг", "correct": false}]}, {"num": 104, "text": "Изолированный железный шар освещается УФ с длиной волны 0.22 мкм. Работа выхода A = 0.5 эВ. Определите максимальный потенциал (В), до которого зарядится шар.", "options": [{"label": "a", "text": "5.1 В", "correct": true}, {"label": "b", "text": "0.5 В", "correct": false}, {"label": "c", "text": "7.9 В", "correct": false}, {"label": "d", "text": "2.5 В", "correct": false}]}, {"num": 105, "text": "Красная граница фотоэффекта для металла равна λ0 = 662 нм. Найдите наименьшую энергию фотона (Дж), вызывающую эффект.", "options": [{"label": "a", "text": "3×10^-19 Дж", "correct": true}, {"label": "b", "text": "6×10^-19 Дж", "correct": false}, {"label": "c", "text": "9×10^-19 Дж", "correct": false}, {"label": "d", "text": "1.5×10^-19 Дж", "correct": false}]}, {"num": 106, "text": "Рубидий, освещённый УФ-светом с длиной волны 317 нм, даёт электроны с максимальной кинетической энергией 2.84×10^-19 Дж. Определите длину волны красной границы фотоэффекта.", "options": [{"label": "a", "text": "540 нм", "correct": true}, {"label": "b", "text": "420 нм", "correct": false}, {"label": "c", "text": "600 нм", "correct": false}, {"label": "d", "text": "317 нм", "correct": false}]}, {"num": 107, "text": "Какая длина волны падающего света даёт максимальную скорость электронов 2×10^6 м/с из цезия? Красная граница для цезия равна 2.9×10^-19 Дж.", "options": [{"label": "a", "text": "290 нм", "correct": true}, {"label": "b", "text": "400 нм", "correct": false}, {"label": "c", "text": "200 нм", "correct": false}, {"label": "d", "text": "500 нм", "correct": false}]}, {"num": 108, "text": "Если энергия фотона на металле равна 7.8×10^-19 Дж, а работа выхода 3×10^-19 Дж, определите запирающее напряжение.", "options": [{"label": "a", "text": "3 В", "correct": true}, {"label": "b", "text": "4.8 В", "correct": false}, {"label": "c", "text": "1.8 В", "correct": false}, {"label": "d", "text": "6 В", "correct": false}]}, {"num": 109, "text": "Красная граница фотоэффекта для катода равна 3×10^14 Гц. Падают лучи с частотой 3×10^14 Гц. Определите запирающее напряжение.", "options": [{"label": "a", "text": "0 В", "correct": true}, {"label": "b", "text": "1 В", "correct": false}, {"label": "c", "text": "2 В", "correct": false}, {"label": "d", "text": "3 В", "correct": false}]}, {"num": 110, "text": "Если максимальная скорость электронов, выбитых из цинка, равна 10^6 м/с, какая доля энергии падающего фотона расходуется на работу выхода? Красная граница для цинка равна 290 нм.", "options": [{"label": "a", "text": "Около 0.6 (≈60%)", "correct": true}, {"label": "b", "text": "Около 0.4", "correct": false}, {"label": "c", "text": "Около 0.2", "correct": false}, {"label": "d", "text": "Около 0.9", "correct": false}]}, {"num": 111, "text": "Вольфрам испускает электроны, задерживаемые при 4.5 В. Во сколько раз длина волны этих лучей больше длины волны красной границы? Работа выхода для вольфрама равна 7.2×10^-19 Дж.", "options": [{"label": "a", "text": "2", "correct": false}, {"label": "b", "text": "Падающая длина волны короче, около 0.39 от длины волны красной границы", "correct": true}, {"label": "c", "text": "4", "correct": false}, {"label": "d", "text": "1", "correct": false}]}, {"num": 112, "text": "Излучение с длиной волны 150 нм падает на металл. Уменьшение длины волны в 2 раза увеличивает запирающее напряжение в 3 раза. Определите частоту красной границы.", "options": [{"label": "a", "text": "1×10^15 Гц", "correct": true}, {"label": "b", "text": "2×10^15 Гц", "correct": false}, {"label": "c", "text": "5×10^14 Гц", "correct": false}, {"label": "d", "text": "3×10^15 Гц", "correct": false}]}, {"num": 113, "text": "Когда абсолютно чёрное тело остывает с T1 = 1000 K до T2 = 500 K, насколько изменяется длина волны максимума (мкм)?", "options": [{"label": "a", "text": "Увеличивается примерно на 2.9 мкм", "correct": true}, {"label": "b", "text": "Уменьшается на 2.9 мкм", "correct": false}, {"label": "c", "text": "Увеличивается на 1.45 мкм", "correct": false}, {"label": "d", "text": "Не изменяется", "correct": false}]}, {"num": 114, "text": "Красная граница фотоэффекта для металла равна λ0 = 550 нм. Найдите наименьшую энергию фотона (эВ), вызывающую эффект.", "options": [{"label": "a", "text": "2.25 эВ", "correct": true}, {"label": "b", "text": "1.5 эВ", "correct": false}, {"label": "c", "text": "3.0 эВ", "correct": false}, {"label": "d", "text": "4.5 эВ", "correct": false}]}, {"num": 115, "text": "Красная граница фотоэффекта равна λ0 = 132.4 нм. Найдите наименьшую энергию фотона (Дж).", "options": [{"label": "a", "text": "1.5×10^-18 Дж", "correct": true}, {"label": "b", "text": "6×10^-19 Дж", "correct": false}, {"label": "c", "text": "9×10^-19 Дж", "correct": false}, {"label": "d", "text": "3×10^-19 Дж", "correct": false}]}, {"num": 116, "text": "Абсолютно чёрное тело излучает N = 56.7 Вт с длиной волны максимума λ0 = 5.8 мкм. Определите площадь излучающей поверхности S (см²). (σ = 5.67×10^-8)", "options": [{"label": "a", "text": "1000 см²", "correct": true}, {"label": "b", "text": "100 см²", "correct": false}, {"label": "c", "text": "10 см²", "correct": false}, {"label": "d", "text": "500 см²", "correct": false}]}, {"num": 117, "text": "Абсолютно чёрное тело излучает N = 1 кВт с длиной волны максимума λ0 = 1.45 мкм. Определите площадь излучающей поверхности S (см²).", "options": [{"label": "a", "text": "0.69 см²", "correct": true}, {"label": "b", "text": "1 см²", "correct": false}, {"label": "c", "text": "10 см²", "correct": false}, {"label": "d", "text": "100 см²", "correct": false}]}, {"num": 118, "text": "Максимум энергии излучения абсолютно чёрного тела соответствует λ0 = 8.7 мкм. Найдите температуру T.", "options": [{"label": "a", "text": "333 K", "correct": true}, {"label": "b", "text": "500 K", "correct": false}, {"label": "c", "text": "1000 K", "correct": false}, {"label": "d", "text": "290 K", "correct": false}]}, {"num": 119, "text": "Максимум энергии излучения абсолютно чёрного тела соответствует λ0 = 5.8 мкм. Найдите температуру T.", "options": [{"label": "a", "text": "500 K", "correct": true}, {"label": "b", "text": "333 K", "correct": false}, {"label": "c", "text": "1000 K", "correct": false}, {"label": "d", "text": "290 K", "correct": false}]}, {"num": 120, "text": "Максимум энергии излучения абсолютно чёрного тела соответствует λ0 = 2.9 мкм. Найдите температуру T.", "options": [{"label": "a", "text": "1000 K", "correct": true}, {"label": "b", "text": "500 K", "correct": false}, {"label": "c", "text": "333 K", "correct": false}, {"label": "d", "text": "290 K", "correct": false}]}, {"num": 121, "text": "Длина волны жёлтого света в вакууме равна 580 нм, а в жидком бензоле 290 нм. Определите показатель преломления бензола.", "options": [{"label": "a", "text": "2.0", "correct": true}, {"label": "b", "text": "1.5", "correct": false}, {"label": "c", "text": "1.33", "correct": false}, {"label": "d", "text": "2.5", "correct": false}]}, {"num": 122, "text": "Длина волны жёлтого света в вакууме равна 600 нм, а в бензоле 360 нм. Определите показатель преломления бензола.", "options": [{"label": "a", "text": "1.67", "correct": true}, {"label": "b", "text": "1.5", "correct": false}, {"label": "c", "text": "1.33", "correct": false}, {"label": "d", "text": "2.0", "correct": false}]}, {"num": 123, "text": "Длина волны света в стекле равна 450 нм. Свет распространяется в стекле со скоростью 1.8×10^5 км/с. Определите частоту (с^-1).", "options": [{"label": "a", "text": "4×10^14 Гц", "correct": true}, {"label": "b", "text": "5×10^14 Гц", "correct": false}, {"label": "c", "text": "3×10^14 Гц", "correct": false}, {"label": "d", "text": "6×10^14 Гц", "correct": false}]}, {"num": 124, "text": "Длина волны света в стекле равна 500 нм. Свет распространяется в стекле со скоростью 1.5×10^5 км/с. Определите частоту (с^-1).", "options": [{"label": "a", "text": "3×10^14 Гц", "correct": true}, {"label": "b", "text": "5×10^14 Гц", "correct": false}, {"label": "c", "text": "4×10^14 Гц", "correct": false}, {"label": "d", "text": "6×10^14 Гц", "correct": false}]}, {"num": 125, "text": "Длина волны максимума абсолютно чёрного тела равна λ0 = 0.29 мкм. Определите температуру T (K). (b = 2.9×10^-3 м·K)", "options": [{"label": "a", "text": "10000 K", "correct": true}, {"label": "b", "text": "5000 K", "correct": false}, {"label": "c", "text": "1000 K", "correct": false}, {"label": "d", "text": "500 K", "correct": false}]}, {"num": 126, "text": "Длина волны максимума абсолютно чёрного тела равна λ0 = 5.8 мкм. Определите температуру T (K).", "options": [{"label": "a", "text": "500 K", "correct": true}, {"label": "b", "text": "1000 K", "correct": false}, {"label": "c", "text": "333 K", "correct": false}, {"label": "d", "text": "290 K", "correct": false}]}, {"num": 127, "text": "Длина волны максимума абсолютно чёрного тела равна λ0 = 8.7 мкм. Определите температуру T (K).", "options": [{"label": "a", "text": "333 K", "correct": true}, {"label": "b", "text": "500 K", "correct": false}, {"label": "c", "text": "1000 K", "correct": false}, {"label": "d", "text": "290 K", "correct": false}]}, {"num": 128, "text": "При какой длине волны (нм) находится максимум спектральной плотности абсолютно чёрного тела при 5800 K? (b = 2.9×10^-3 м·K)", "options": [{"label": "a", "text": "500 нм", "correct": true}, {"label": "b", "text": "580 нм", "correct": false}, {"label": "c", "text": "290 нм", "correct": false}, {"label": "d", "text": "600 нм", "correct": false}]}];
+
+const state = {
+  mode: 'theory',
+  currentList: [],
+  activeIndex: 0,
+  answers: new Map(), // key: question num, value: selected label
+  filtered: [],
+  randomMode: false
+};
+
+const els = {
+  quiz: document.getElementById('quiz'),
+  miniList: document.getElementById('miniList'),
+  countPill: document.getElementById('countPill'),
+  modePill: document.getElementById('modePill'),
+  statTotal: document.getElementById('statTotal'),
+  statCorrect: document.getElementById('statCorrect'),
+  statWrong: document.getElementById('statWrong'),
+  statScore: document.getElementById('statScore'),
+  feedback: document.getElementById('feedback'),
+  search: document.getElementById('search'),
+  rangeSelect: document.getElementById('rangeSelect'),
+};
+
+function getPool(mode) {
+  if (mode === 'theory') return QUESTIONS.filter(q => q.num <= 87);
+  if (mode === 'practice') return QUESTIONS.filter(q => q.num >= 88);
+  return QUESTIONS.slice();
+}
+
+function shuffle(array) {
+  const a = array.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function applySearch(list) {
+  const q = els.search.value.trim().toLowerCase();
+  if (!q) return list;
+  return list.filter(item =>
+    String(item.num).includes(q) ||
+    item.text.toLowerCase().includes(q) ||
+    item.options.some(o => o.text.toLowerCase().includes(q))
+  );
+}
+
+function refreshList(keepIndex = true) {
+  let list = getPool(state.mode);
+  if (state.randomMode) list = shuffle(list).slice(0, Math.min(10, list.length));
+  list = applySearch(list);
+  state.currentList = list;
+  if (!keepIndex || state.activeIndex >= list.length) state.activeIndex = 0;
+  render();
+}
+
+function currentQuestion() {
+  return state.currentList[state.activeIndex];
+}
+
+function render() {
+  const list = state.currentList;
+  els.countPill.textContent = `Вопросов: ${list.length}`;
+  els.modePill.textContent = `Режим: ${state.mode === 'all' ? 'все' : state.mode === 'theory' ? 'теория' : 'практика'}`;
+  els.statTotal.textContent = list.length;
+
+  const answered = list.filter(q => state.answers.has(q.num));
+  const correct = list.filter(q => {
+    const ans = state.answers.get(q.num);
+    const corr = q.options.find(o => o.correct);
+    return ans && ans === corr.label;
+  }).length;
+  const wrong = answered.length - correct;
+  const score = list.length ? Math.round((correct / list.length) * 100) : 0;
+
+  els.statCorrect.textContent = correct;
+  els.statWrong.textContent = wrong;
+  els.statScore.textContent = score + '%';
+
+  els.quiz.innerHTML = '';
+  els.miniList.innerHTML = '';
+
+  list.forEach((q, idx) => {
+    const corr = q.options.find(o => o.correct)?.label;
+    const mini = document.createElement('div');
+    mini.className = 'mini' + (idx === state.activeIndex ? ' active' : '');
+    mini.innerHTML = `<strong>№${q.num}</strong><div class="t">${escapeHtml(shorten(q.text, 110))}</div>`;
+    mini.onclick = () => { state.activeIndex = idx; render(); };
+    els.miniList.appendChild(mini);
+  });
+
+  const q = currentQuestion();
+  if (!q) {
+    els.quiz.innerHTML = '<div class="small">Нет вопросов в этом наборе.</div>';
+    return;
+  }
+
+  const corr = q.options.find(o => o.correct)?.label;
+  const selected = state.answers.get(q.num);
+
+  const qBox = document.createElement('div');
+  qBox.innerHTML = `
+    <div class="meta">
+      <div><strong>Вопрос №${q.num}</strong></div>
+      <div>${state.activeIndex + 1} / ${list.length}</div>
+    </div>
+    <div class="question">${escapeHtml(q.text)}</div>
+    <div class="options">
+      ${q.options.map(opt => {
+        let cls = 'opt';
+        if (selected === opt.label) cls += ' selected';
+        return `<div class="${cls}" data-label="${opt.label}"><strong>${opt.label})</strong> ${escapeHtml(opt.text)}</div>`;
+      }).join('')}
+    </div>
+  `;
+  els.quiz.appendChild(qBox);
+
+  qBox.querySelectorAll('.opt').forEach(el => {
+    el.onclick = () => {
+      state.answers.set(q.num, el.dataset.label);
+      render();
+    };
+  });
+
+  const hasAnswered = state.answers.has(q.num);
+  const isCorrect = hasAnswered && state.answers.get(q.num) === corr;
+  let fb = '';
+  if (hasAnswered) {
+    fb = isCorrect
+      ? `Верно. Правильный ответ: <strong>${corr})</strong>`
+      : `Неверно. Твой ответ: <strong>${state.answers.get(q.num)})</strong>. Правильный ответ: <strong>${corr})</strong>`;
+  } else {
+    fb = `Выбери вариант ответа. Правильный ответ скрыт, пока не нажмёшь «Показать ответ» или «Проверить».`;
+  }
+  els.feedback.innerHTML = fb;
+  els.feedback.classList.add('show');
+
+  // Highlight correct/wrong after answer exists or explicit check
+  if (hasAnswered) {
+    qBox.querySelectorAll('.opt').forEach(el => {
+      const label = el.dataset.label;
+      if (label === corr) el.classList.add('correct');
+      if (label === selected && selected !== corr) el.classList.add('wrong');
+    });
+  }
+}
+
+function escapeHtml(s) {
+  return s.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+
+function shorten(s, n) {
+  return s.length > n ? s.slice(0, n - 1) + '…' : s;
+}
+
+function setMode(mode) {
+  state.mode = mode;
+  state.randomMode = false;
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.mode === mode));
+  refreshList(false);
+}
+
+document.querySelectorAll('.tab').forEach(t => {
+  t.addEventListener('click', () => setMode(t.dataset.mode));
+});
+
+document.getElementById('random10').onclick = () => {
+  state.randomMode = true;
+  refreshList(false);
+};
+
+document.getElementById('allBtn').onclick = () => {
+  state.randomMode = false;
+  state.mode = 'all';
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  refreshList(false);
+};
+
+document.getElementById('resetBtn').onclick = () => {
+  state.answers.clear();
+  state.activeIndex = 0;
+  state.randomMode = false;
+  refreshList(false);
+};
+
+document.getElementById('checkBtn').onclick = () => {
+  const q = currentQuestion();
+  if (!q) return;
+  const corr = q.options.find(o => o.correct)?.label;
+  const sel = state.answers.get(q.num);
+  if (!sel) {
+    els.feedback.innerHTML = `Сначала выбери ответ. Правильный: <strong>${corr})</strong>`;
+  } else if (sel === corr) {
+    els.feedback.innerHTML = `Верно. Правильный ответ: <strong>${corr})</strong>`;
+  } else {
+    els.feedback.innerHTML = `Неверно. Твой ответ: <strong>${sel})</strong>. Правильный: <strong>${corr})</strong>`;
+  }
+  els.feedback.classList.add('show');
+  render();
+};
+
+document.getElementById('showAnswerBtn').onclick = () => {
+  const q = currentQuestion();
+  if (!q) return;
+  const corr = q.options.find(o => o.correct)?.label;
+  els.feedback.innerHTML = `Правильный ответ: <strong>${corr})</strong>`;
+  els.feedback.classList.add('show');
+  render();
+};
+
+document.getElementById('nextBtn').onclick = () => {
+  if (state.activeIndex < state.currentList.length - 1) state.activeIndex++;
+  render();
+};
+
+document.getElementById('prevBtn').onclick = () => {
+  if (state.activeIndex > 0) state.activeIndex--;
+  render();
+};
+
+els.search.addEventListener('input', () => refreshList(false));
+els.rangeSelect.addEventListener('change', () => {
+  const v = els.rangeSelect.value;
+  if (v === 'all') {
+    state.mode = 'all';
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  }
+  refreshList(false);
+});
+
+document.addEventListener('keydown', (e) => {
+  const q = currentQuestion();
+  if (!q) return;
+
+  if (['1','2','3','4'].includes(e.key)) {
+    const idx = Number(e.key) - 1;
+    const opt = q.options[idx];
+    if (opt) {
+      state.answers.set(q.num, opt.label);
+      render();
+    }
+  }
+  if (e.key === 'Enter') document.getElementById('checkBtn').click();
+  if (e.key === ' ') {
+    e.preventDefault();
+    document.getElementById('nextBtn').click();
+  }
+});
+
+// init
+refreshList(false);
+</script>
+</body>
+</html>
