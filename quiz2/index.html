@@ -913,8 +913,9 @@ const ALL_QUESTIONS = [
 let selectedCount = 30;
 let session = [];          // shuffled indices
 let current = 0;           // current question index in session
-let answers = {};          // {sessionIdx: chosenOptIdx or null}
+let answers = {};          // {sessionIdx: original chosenOptIdx or null}
 let answered = {};         // {sessionIdx: true if answered}
+let optionOrders = {};     // {sessionIdx: [{text, originalIndex}]}
 let correctCount = 0;
 let wrongCount  = 0;
 let timerSec = 0;
@@ -950,6 +951,7 @@ function startQuiz() {
   current = 0;
   answers = {};
   answered = {};
+  optionOrders = {};
   correctCount = 0;
   wrongCount = 0;
   timerSec = 0;
@@ -991,6 +993,7 @@ function renderQuestion() {
   const qi = session[current];
   const qData = ALL_QUESTIONS[qi];
   const answered_this = answered[current];
+  const options = getOptionOrder(current, qData);
 
   // Progress
   const done = Object.keys(answered).length;
@@ -1022,17 +1025,17 @@ function renderQuestion() {
   const list = document.getElementById('optionsList');
   list.innerHTML = '';
   const labels = ['А', 'Б', 'В', 'Г'];
-  qData.opts.forEach((opt, i) => {
+  options.forEach((opt, i) => {
     const btn = document.createElement('button');
     btn.className = 'option-btn';
     if (answered_this) {
       btn.classList.add('disabled');
-      if (i === qData.correct) btn.classList.add('correct');
-      else if (i === answers[current]) btn.classList.add('wrong');
+      if (opt.originalIndex === qData.correct) btn.classList.add('correct');
+      else if (opt.originalIndex === answers[current]) btn.classList.add('wrong');
     }
-    btn.innerHTML = `<span class="opt-letter">${labels[i]}</span><span>${opt}</span>`;
+    btn.innerHTML = `<span class="opt-letter">${labels[i]}</span><span>${opt.text}</span>`;
     if (!answered_this) {
-      btn.addEventListener('click', () => selectAnswer(i));
+      btn.addEventListener('click', () => selectAnswer(opt.originalIndex));
     }
     list.appendChild(btn);
   });
@@ -1040,6 +1043,13 @@ function renderQuestion() {
   // Nav buttons
   document.getElementById('btnPrev').disabled = current === 0;
   document.getElementById('btnNext').disabled = current === session.length - 1;
+}
+
+function getOptionOrder(sessionIdx, qData) {
+  if (!optionOrders[sessionIdx]) {
+    optionOrders[sessionIdx] = shuffle(qData.opts.map((text, originalIndex) => ({ text, originalIndex })));
+  }
+  return optionOrders[sessionIdx];
 }
 
 function selectAnswer(optIdx) {
@@ -1148,6 +1158,9 @@ function buildReview() {
     const qData = ALL_QUESTIONS[qi];
     const chosen = answers[i];
     if (chosen === undefined || chosen === qData.correct) continue;
+    const options = optionOrders[i] || qData.opts.map((text, originalIndex) => ({ text, originalIndex }));
+    const chosenDisplayIdx = options.findIndex(opt => opt.originalIndex === chosen);
+    const correctDisplayIdx = options.findIndex(opt => opt.originalIndex === qData.correct);
     count++;
 
     const item = document.createElement('div');
@@ -1156,8 +1169,8 @@ function buildReview() {
       <div class="review-q-num">Вопрос ${i + 1} из сессии</div>
       <div class="review-q-text">${qData.q}</div>
       <div class="review-answers">
-        <div class="review-ans your-wrong">✗ Ваш ответ: ${labels[chosen]}. ${qData.opts[chosen]}</div>
-        <div class="review-ans correct-ans">✓ Правильно: ${labels[qData.correct]}. ${qData.opts[qData.correct]}</div>
+        <div class="review-ans your-wrong">✗ Ваш ответ: ${labels[chosenDisplayIdx]}. ${qData.opts[chosen]}</div>
+        <div class="review-ans correct-ans">✓ Правильно: ${labels[correctDisplayIdx]}. ${qData.opts[qData.correct]}</div>
       </div>
     `;
     list.appendChild(item);
