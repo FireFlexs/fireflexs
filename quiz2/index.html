@@ -1,0 +1,1200 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Тест по Философии</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:        #0a0a0f;
+    --bg2:       #111118;
+    --bg3:       #18181f;
+    --border:    #252530;
+    --border2:   #303042;
+    --text:      #e8e8f0;
+    --muted:     #7070a0;
+    --accent:    #6c63ff;
+    --accent2:   #9f99ff;
+    --correct:   #22c97c;
+    --wrong:     #ff5767;
+    --warn:      #ffb347;
+    --glow:      rgba(108,99,255,0.25);
+    --radius:    12px;
+    --radius2:   20px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* NOISE OVERLAY */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    background-size: 256px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 24px 20px 60px;
+  }
+
+  /* ─── HEADER ─── */
+  .app-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 40px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .logo-icon {
+    width: 40px; height: 40px;
+    background: linear-gradient(135deg, var(--accent), #a78bfa);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+    box-shadow: 0 0 20px var(--glow);
+  }
+  .app-title {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    color: var(--text);
+  }
+  .app-subtitle {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  /* ─── SCREENS ─── */
+  .screen { display: none; animation: fadeUp 0.4s ease; }
+  .screen.active { display: block; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ─── SETUP SCREEN ─── */
+  .setup-hero {
+    text-align: center;
+    padding: 48px 24px 40px;
+    background: linear-gradient(160deg, var(--bg2) 0%, var(--bg3) 100%);
+    border: 1px solid var(--border);
+    border-radius: var(--radius2);
+    margin-bottom: 28px;
+    position: relative;
+    overflow: hidden;
+  }
+  .setup-hero::before {
+    content: '';
+    position: absolute;
+    top: -60px; left: 50%; transform: translateX(-50%);
+    width: 300px; height: 300px;
+    background: radial-gradient(circle, rgba(108,99,255,0.15) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-emoji { font-size: 56px; margin-bottom: 16px; display: block; }
+  .hero-title {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 26px;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 10px;
+    background: linear-gradient(135deg, #fff, var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .hero-desc { color: var(--muted); font-size: 15px; line-height: 1.6; }
+
+  .setup-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius2);
+    padding: 32px;
+  }
+  .setup-label {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .count-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+    gap: 10px;
+    margin-bottom: 28px;
+  }
+  .count-btn {
+    padding: 14px 10px;
+    background: var(--bg3);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text);
+    font-family: 'Unbounded', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+  }
+  .count-btn:hover { border-color: var(--accent2); background: rgba(108,99,255,0.08); }
+  .count-btn.selected {
+    border-color: var(--accent);
+    background: rgba(108,99,255,0.18);
+    color: var(--accent2);
+    box-shadow: 0 0 20px var(--glow);
+  }
+
+  .custom-count-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+  .custom-count-row label {
+    font-size: 13px;
+    color: var(--muted);
+    flex-shrink: 0;
+  }
+  .custom-input {
+    flex: 1;
+    background: var(--bg3);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    padding: 10px 14px;
+    outline: none;
+    transition: border-color 0.2s;
+    max-width: 120px;
+  }
+  .custom-input:focus { border-color: var(--accent2); }
+
+  .info-row {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+  .info-pill {
+    flex: 1;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .info-pill-label { font-size: 11px; color: var(--muted); }
+  .info-pill-val {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--accent2);
+  }
+
+  /* ─── BUTTONS ─── */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px 28px;
+    border-radius: var(--radius);
+    font-family: 'Unbounded', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent), #8b5cf6);
+    color: #fff;
+    width: 100%;
+    padding: 16px;
+    font-size: 14px;
+    box-shadow: 0 4px 24px var(--glow);
+  }
+  .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); box-shadow: 0 8px 32px var(--glow); }
+  .btn-primary:active { transform: translateY(0); }
+  .btn-secondary {
+    background: var(--bg3);
+    color: var(--text);
+    border: 1.5px solid var(--border);
+  }
+  .btn-secondary:hover { border-color: var(--border2); background: var(--border); }
+  .btn-danger {
+    background: rgba(255,87,103,0.12);
+    color: var(--wrong);
+    border: 1.5px solid rgba(255,87,103,0.25);
+  }
+  .btn-danger:hover { background: rgba(255,87,103,0.2); }
+
+  /* ─── QUIZ SCREEN ─── */
+  .quiz-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  .progress-wrap { flex: 1; }
+  .progress-label {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 6px;
+    display: flex;
+    justify-content: space-between;
+  }
+  .progress-bar {
+    height: 4px;
+    background: var(--border);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 99px;
+    transition: width 0.4s ease;
+  }
+
+  .timer-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 8px 14px;
+    flex-shrink: 0;
+  }
+  .timer-icon { font-size: 14px; }
+  .timer-display {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--accent2);
+    min-width: 52px;
+  }
+
+  .question-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius2);
+    padding: 32px;
+    margin-bottom: 20px;
+    animation: fadeUp 0.3s ease;
+  }
+  .q-num {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  .q-text {
+    font-size: 17px;
+    font-weight: 500;
+    line-height: 1.6;
+    color: var(--text);
+  }
+
+  .options-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+  .option-btn {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 16px 20px;
+    background: var(--bg2);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.2s;
+    width: 100%;
+  }
+  .option-btn:hover:not(.disabled) {
+    border-color: var(--accent2);
+    background: rgba(108,99,255,0.08);
+  }
+  .option-btn.disabled { cursor: default; }
+
+  .opt-letter {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--muted);
+    flex-shrink: 0;
+    margin-top: 1px;
+    min-width: 20px;
+  }
+  .option-btn.correct {
+    border-color: var(--correct);
+    background: rgba(34,201,124,0.1);
+  }
+  .option-btn.correct .opt-letter { color: var(--correct); }
+  .option-btn.wrong {
+    border-color: var(--wrong);
+    background: rgba(255,87,103,0.1);
+  }
+  .option-btn.wrong .opt-letter { color: var(--wrong); }
+  .option-btn.reveal-correct {
+    border-color: rgba(34,201,124,0.4);
+    background: rgba(34,201,124,0.05);
+  }
+  .option-btn.reveal-correct .opt-letter { color: rgba(34,201,124,0.7); }
+
+  .feedback-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 99px;
+    font-family: 'Unbounded', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    margin-bottom: 20px;
+    animation: pop 0.25s ease;
+  }
+  .feedback-badge.correct-fb { background: rgba(34,201,124,0.15); color: var(--correct); border: 1px solid rgba(34,201,124,0.3); }
+  .feedback-badge.wrong-fb { background: rgba(255,87,103,0.15); color: var(--wrong); border: 1px solid rgba(255,87,103,0.3); }
+
+  @keyframes pop {
+    0% { transform: scale(0.8); opacity: 0; }
+    60% { transform: scale(1.05); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  .nav-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .nav-left { display: flex; gap: 10px; }
+  .nav-right { display: flex; gap: 10px; }
+
+  .score-mini {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'Unbounded', sans-serif;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .score-mini .s-correct { color: var(--correct); font-weight: 700; }
+  .score-mini .s-wrong { color: var(--wrong); font-weight: 700; }
+
+  /* ─── RESULTS SCREEN ─── */
+  .results-header {
+    text-align: center;
+    padding: 48px 24px 36px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius2);
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .results-header::before {
+    content: '';
+    position: absolute;
+    bottom: -80px; left: 50%; transform: translateX(-50%);
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(108,99,255,0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .result-grade-circle {
+    width: 100px; height: 100px;
+    border-radius: 50%;
+    border: 3px solid var(--accent);
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column;
+    margin: 0 auto 20px;
+    box-shadow: 0 0 40px var(--glow);
+    position: relative;
+  }
+  .result-grade-pct {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1;
+  }
+  .result-grade-label { font-size: 10px; color: var(--muted); }
+  .result-title {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .result-title.excellent { color: var(--correct); }
+  .result-title.good { color: var(--accent2); }
+  .result-title.fair { color: var(--warn); }
+  .result-title.poor { color: var(--wrong); }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .stat-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 16px;
+    text-align: center;
+  }
+  .stat-val {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .stat-val.green { color: var(--correct); }
+  .stat-val.red { color: var(--wrong); }
+  .stat-val.purple { color: var(--accent2); }
+  .stat-name { font-size: 12px; color: var(--muted); }
+
+  .results-actions {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 28px;
+  }
+  .results-actions .btn { flex: 1; }
+
+  /* ─── REVIEW SECTION ─── */
+  .review-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 18px;
+    cursor: pointer;
+    transition: border-color 0.2s;
+    margin-bottom: 12px;
+    width: 100%;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+  }
+  .review-toggle:hover { border-color: var(--border2); }
+  .review-toggle-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .review-arrow { transition: transform 0.25s; color: var(--muted); font-size: 18px; }
+  .review-arrow.open { transform: rotate(180deg); }
+
+  .review-list { display: none; }
+  .review-list.open { display: flex; flex-direction: column; gap: 10px; }
+
+  .review-item {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    border-left: 3px solid transparent;
+  }
+  .review-item.correct-item { border-left-color: var(--correct); }
+  .review-item.wrong-item { border-left-color: var(--wrong); }
+
+  .review-q-num {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .review-q-text { font-size: 14px; color: var(--text); margin-bottom: 10px; line-height: 1.5; }
+  .review-answers { display: flex; flex-direction: column; gap: 4px; }
+  .review-ans { font-size: 13px; line-height: 1.4; }
+  .review-ans.your-wrong { color: var(--wrong); }
+  .review-ans.your-correct { color: var(--correct); }
+  .review-ans.correct-ans { color: var(--correct); opacity: 0.8; }
+
+  /* ─── MISC ─── */
+  .divider { height: 1px; background: var(--border); margin: 20px 0; }
+
+  @media (max-width: 560px) {
+    .stats-grid { grid-template-columns: repeat(3, 1fr); }
+    .question-card { padding: 20px; }
+    .setup-card { padding: 20px; }
+    .hero-title { font-size: 20px; }
+    .nav-row { flex-wrap: wrap; }
+    .results-actions { flex-direction: column; }
+    .count-options { grid-template-columns: repeat(3, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <header class="app-header">
+    <div class="logo-icon">🧠</div>
+    <div>
+      <div class="app-title">ФИЛОСОФИЯ</div>
+      <div class="app-subtitle">Интерактивное тестирование</div>
+    </div>
+  </header>
+
+  <!-- ─── SETUP SCREEN ─── -->
+  <div id="screen-setup" class="screen active">
+    <div class="setup-hero">
+      <span class="hero-emoji">⚗️</span>
+      <div class="hero-title">Тест по Философии</div>
+      <p class="hero-desc">200 вопросов по всему курсу философии — от античности до современности. Выберите количество вопросов и начните тестирование.</p>
+    </div>
+    <div class="setup-card">
+      <div class="setup-label">Количество вопросов</div>
+      <div class="count-options" id="countOptions">
+        <button class="count-btn" data-val="10">10</button>
+        <button class="count-btn" data-val="20">20</button>
+        <button class="count-btn selected" data-val="30">30</button>
+        <button class="count-btn" data-val="50">50</button>
+        <button class="count-btn" data-val="100">100</button>
+        <button class="count-btn" data-val="200">Все</button>
+      </div>
+      <div class="custom-count-row">
+        <label>Или введите вручную:</label>
+        <input type="number" class="custom-input" id="customCount" placeholder="1–200" min="1" max="200">
+      </div>
+      <div class="info-row">
+        <div class="info-pill">
+          <span class="info-pill-label">Вопросов в базе</span>
+          <span class="info-pill-val">200</span>
+        </div>
+        <div class="info-pill">
+          <span class="info-pill-label">Выбрано</span>
+          <span class="info-pill-val" id="selectedCount">30</span>
+        </div>
+        <div class="info-pill">
+          <span class="info-pill-label">Порядок</span>
+          <span class="info-pill-val" style="font-size:12px;margin-top:2px;">Случайный</span>
+        </div>
+      </div>
+      <button class="btn btn-primary" onclick="startQuiz()">▶ Начать тест</button>
+    </div>
+  </div>
+
+  <!-- ─── QUIZ SCREEN ─── -->
+  <div id="screen-quiz" class="screen">
+    <div class="quiz-topbar">
+      <div class="progress-wrap">
+        <div class="progress-label">
+          <span id="progressText">Вопрос 1 из 30</span>
+          <span id="progressPct">0%</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="progressFill" style="width:0%"></div>
+        </div>
+      </div>
+      <div class="timer-wrap">
+        <span class="timer-icon">⏱</span>
+        <span class="timer-display" id="timerDisplay">00:00</span>
+      </div>
+    </div>
+
+    <div class="question-card" id="questionCard">
+      <div class="q-num" id="qNum">Вопрос 1</div>
+      <div class="q-text" id="qText"></div>
+    </div>
+
+    <div id="feedbackArea"></div>
+
+    <div class="options-list" id="optionsList"></div>
+
+    <div class="nav-row">
+      <div class="nav-left">
+        <button class="btn btn-secondary" id="btnPrev" onclick="goQuestion(-1)">← Назад</button>
+        <button class="btn btn-secondary" id="btnNext" onclick="goQuestion(1)">Вперёд →</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div class="score-mini">
+          ✅ <span class="s-correct" id="scoreCorrect">0</span>
+          &nbsp; ❌ <span class="s-wrong" id="scoreWrong">0</span>
+        </div>
+        <button class="btn btn-danger" onclick="finishEarly()">Завершить</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── RESULTS SCREEN ─── -->
+  <div id="screen-results" class="screen">
+    <div class="results-header">
+      <div class="result-grade-circle" id="gradeCircle">
+        <span class="result-grade-pct" id="gradePct">0%</span>
+        <span class="result-grade-label">оценка</span>
+      </div>
+      <div class="result-title" id="resultTitle">Результат</div>
+      <div style="color:var(--muted);font-size:14px;margin-top:6px;" id="resultSub"></div>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-val green" id="statCorrect">0</div>
+        <div class="stat-name">Правильно</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val red" id="statWrong">0</div>
+        <div class="stat-name">Ошибки</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val purple" id="statTime">0:00</div>
+        <div class="stat-name">Время</div>
+      </div>
+    </div>
+
+    <div class="results-actions">
+      <button class="btn btn-secondary" onclick="goSetup()">⚙ Новая сессия</button>
+      <button class="btn btn-primary" onclick="restartSame()">↺ Повторить</button>
+    </div>
+
+    <div class="divider"></div>
+
+    <button class="review-toggle" onclick="toggleReview()">
+      <div class="review-toggle-label">📋 Разбор ошибок</div>
+      <span class="review-arrow" id="reviewArrow">▼</span>
+    </button>
+    <div class="review-list" id="reviewList"></div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// DATA — 200 вопросов
+// Формат: { q: "Вопрос", opts: ["A","B","C","D"], correct: 0 }
+// correct — индекс правильного ответа (0=A, 1=B, 2=C, 3=D)
+// ═══════════════════════════════════════════════════════════
+
+const ALL_QUESTIONS = [
+{q:"Предмет философии",opts:["всеобщие связи в системе «человек — мир»","истина и заблуждение","законы природы","добро и зло"],correct:0},
+{q:"Философские вопросы выражаются в форме:",opts:["научно-теоретической","религиозной","мифологической","иррациональной"],correct:0},
+{q:"Назовите мыслителя, впервые использовавшего слово «философия»:",opts:["Пифагор","Демокрит","Аристотель","Сократ"],correct:0},
+{q:"Что такое мудрость?",opts:["знания, жизненный опыт","многознание","совокупность знаний","разумность, практичность"],correct:0},
+{q:"Что обозначает термин «философия»?",opts:["любовь к мудрости","любовь к знанию","любовь к жизни","справедливость и счастье"],correct:0},
+{q:"Первооснова мира, по Платону:",opts:["идеи или эйдос","атом","апейрон","огонь"],correct:0},
+{q:"Какие принципы существования вещи выделил Аристотель?",opts:["форма, материя, причина, цель","пассивная материя","активная форма","божественный нус"],correct:0},
+{q:"В современной философии внимание сконцентрировано в основном на проблематике:",opts:["антропологической","онтологической","гносеологической","космологической"],correct:0},
+{q:"Исторические типы мировоззрения:",opts:["мифологическое, религиозное, философское","религиозное, научное, обыденное","обыденное, мифологическое","религиозное, обыденное, сциентистское"],correct:0},
+{q:"В каком веке возникла философия в Древней Греции?",opts:["VI в. до н.э.","IV–V в. до н.э.","IV–III в. до н.э.","V в. до н.э."],correct:0},
+{q:"Назовите учёного, который внёс в астрономическую науку доказательный метод, дал классификацию движения светил:",opts:["аль-Фергани","Беруни","аль-Хорезми","О. Хайям"],correct:0},
+{q:"Кого из мыслителей Центральной Азии называют «Аристотелем Востока»?",opts:["аль-Фараби","Юсуф Хас Хаджиб","Ибн Сино","аль-Газали"],correct:0},
+{q:"Кто обосновал идею нравственного прогресса?",opts:["Гегель","Фараби","И. Кант","Аль-Кинди"],correct:0},
+{q:"Кто стоял у истоков восточного аристотелизма?",opts:["аль-Кинди","Ар-Рази","Аль-Фараби","Мервази"],correct:0},
+{q:"Кому принадлежит лозунг «Сердце с богом, руки в труде»?",opts:["Бахауддин Накшбанди","Бируни","Аль-Фараби","Аль-Хорезми"],correct:0},
+{q:"Кто из мыслителей Средней Азии развил учение о том, что единое бытие состоит из шести ступеней?",opts:["Фараби","Аль-Хорезми","Аль-Кинди","Ар-Рази"],correct:0},
+{q:"Основатели философии в Центральной Азии:",opts:["Аль-Хорезми, Фараби, Ибн Сино, Беруни, Умар Хайям, Улугбек","Зебунисо, Увайси, Нодира","Улугбек, Нодира, Увайси","Бабур, Машраб, Гульхани"],correct:0},
+{q:"В какой книге изложены ранние философские представления нашего региона?",opts:["В «Авесте»","В «Ведах»","В легендах о Гильгамеше","В «Рамаяне»"],correct:0},
+{q:"Кто является автором «Калилы и Димны»?",opts:["автор не установлен","Юсуф Хос Ходжиб","Алишер Навои","Гулхани"],correct:0},
+{q:"Где возникла профилософия?",opts:["в Вавилоне","в Греции","в Туране","в Китае"],correct:0},
+{q:"Центральная проблема схоластики — учение о:",opts:["универсалиях","развитии","материи","идеях"],correct:0},
+{q:"Реализм утверждает:",opts:["общее существует реально","является конструктом человеческого ума","реально существуют отдельные вещи","объективный мир"],correct:0},
+{q:"Номинализм утверждает:",opts:["универсалии являются именами вещей, существуют в разуме","универсалии обладают самостоятельным существованием в качестве вещи","первичность материи или духа","первичность и материи и духа"],correct:0},
+{q:"Назовите представителя эмпиризма Нового времени:",opts:["Ф. Бэкон","Д. Юм","Б. Спиноза","Г. Лейбниц"],correct:0},
+{q:"Кто из философов был последователем рационализма Нового времени?",opts:["Р. Декарт","Дж. Локк","Дж. Беркли","Т. Гоббс"],correct:0},
+{q:"Назовите философа, различавшего «вещи-в-себе» и «вещи-для-нас»:",opts:["И. Кант","Ф. Шеллинг","Л. Фейербах","И. Фихте"],correct:0},
+{q:"Философская концепция панлогизма была создана:",opts:["Г. Гегелем","И. Фихте","И. Кантом","Шеллингом"],correct:0},
+{q:"Кто является основоположником позитивизма?",opts:["О. Конт","Б. Рассел","К. Поппер","К. Ясперс"],correct:0},
+{q:"Философское направление ХХ века, признающее индивидуальное бытие источником любых знаний и ценностей:",opts:["экзистенциализм","философия жизни","философская антропология","герменевтика"],correct:0},
+{q:"Раздел философии, изучающий проблемы бытия, материи, движения:",opts:["онтология","гносеология","аксиология","праксиология"],correct:0},
+{q:"Философская категория, обозначающая объективную реальность, которая даётся человеку в его ощущениях:",opts:["материя","субстанция","вещество","объективная действительность"],correct:0},
+{q:"Некая первичная основа вещей, которая является их последней сущностью:",opts:["субстанция","материя","монада","апейрон"],correct:0},
+{q:"Любое возможное изменение — это:",opts:["движение","рост","развитие","модификация"],correct:0},
+{q:"Порядок взаиморасположения тел — это:",opts:["пространство","территория","расстояние","место"],correct:0},
+{q:"Порядок сменяющих друг друга событий — это:",opts:["время","продолжительность","период","часы"],correct:0},
+{q:"Назовите формы бытия:",opts:["бытие природы, бытие человека, бытие социальное, бытие духовное","индивидуальное бытие, надиндивидуальное бытие","мир вещей, виртуальное бытие","бытие информационное, актуальное бытие"],correct:0},
+{q:"Учение, объясняющее мир через одну субстанцию:",opts:["монизм","материализм","дуализм","плюрализм"],correct:0},
+{q:"Учение, исходящее из наличия в мире двух субстанций:",opts:["дуализм","материализм","монизм","плюрализм"],correct:0},
+{q:"Назовите атрибуты материи:",opts:["вещь, свойство, отношение","предметность, неисчерпаемость","объективность, познаваемость","информативность, активность"],correct:0},
+{q:"Специфическое человеческое отражение и духовное освоение действительности:",opts:["сознание","психика","душа","раздражимость"],correct:0},
+{q:"Адекватное отражение объекта познающим субъектом:",opts:["истина","теория","знание","суждение"],correct:0},
+{q:"Проверенный практикой и подтверждённый логикой результат процесса познания:",opts:["знание","истина","теория","гипотеза"],correct:0},
+{q:"Практика — это:",opts:["предметно-чувственная деятельность","производство","труд","творчество"],correct:0},
+{q:"Совокупность мыслительных и практических правил, позволяющих достичь желаемого результата:",opts:["метод","приём","методика","способ"],correct:0},
+{q:"Учение о методах познания и преобразования действительности:",opts:["методология","органон","средство","эвристика"],correct:0},
+{q:"Способность человека одновременно отображать явления и события о самом процессе сознания на всех его уровнях:",opts:["самосознание","самочувствие","духовность","сознательность"],correct:0},
+{q:"Гносеология — это:",opts:["теория познания","учение о действительности","учение об истине","учение о знаниях"],correct:0},
+{q:"Эпистемология — это:",opts:["научное познание","религиозное познание","художественное познание","ненаучное знание"],correct:0},
+{q:"Полное исчерпывающее знание об объективной действительности:",opts:["абсолютная истина","аксиома","догма","объективная истина"],correct:0},
+{q:"Наука о всеобщих законах развития природы, общества и мышления — это:",opts:["диалектика","кибернетика","метафизика","синергетика"],correct:0},
+{q:"Объективная, существенная, необходимая, устойчивая, всеобщая связь материальных и духовных явлений — это:",opts:["закон","структура","закономерности","система"],correct:0},
+{q:"Направленные, необратимые, качественные изменения — это:",opts:["развитие","модификация","трансформация","движение"],correct:0},
+{q:"Категория, выражающая свойственную вещам специфическую определённость, отличающая вещи друг от друга — это:",opts:["качество","свойство","признак","количество"],correct:0},
+{q:"Объективная определённость качественно однородных явлений, характеризующая их величину, продолжительность существования — это:",opts:["количество","пространство","качество","непрерывность"],correct:0},
+{q:"Категория философии, определяющая границы, в которых количественные изменения не приводят к изменению качества:",opts:["мера","единство","гармония","синтез"],correct:0},
+{q:"Прерывность в развитии — это:",opts:["скачок","разрушение","взрыв","революция"],correct:0},
+{q:"Переход от старого качества к новому, при котором определённые стороны старого качества переходят в изменённом виде в новое качество:",opts:["отрицание","преемственность","традиция","разрушение"],correct:0},
+{q:"С точки зрения какого философского метода движение понимается как пространственное перемещение объекта, и при этом объект качественно не изменяется?",opts:["метафизика","синергетика","догматизм","эклектика"],correct:0},
+{q:"Предельно общее универсальное понятие, в котором представлены всеобщие связи и отношения реальности — это:",opts:["категория","субстрат","монада","атом"],correct:0},
+{q:"Комплекс острейших социоприродных противоречий, затрагивающих мир в целом — это проблемы:",opts:["глобальные","планетарные","мировые","региональные"],correct:0},
+{q:"Круг острых вопросов, возникающих в рамках отдельных континентов, крупных социально-экономических регионов мира:",opts:["континентальные","региональные","локальные","мировые"],correct:0},
+{q:"Каковы критерии глобальных проблем?",opts:["все ответы верны","нерешённость проблем создаёт угрозу для человечества","решение проблем требует сотрудничества в мировом масштабе","затрагивают интересы всего человечества"],correct:0},
+{q:"Что такое Римский клуб?",opts:["объединение учёных для рассмотрения глобальных проблем","объединение футбольных болельщиков города Рима","объединение римских политологов, борющихся с коррупцией","объединение народов Центральной Италии"],correct:0},
+{q:"Чем вызван кризис современной цивилизации?",opts:["отсутствием разумной стратегии развития общества","развитием науки","дефектами социальной системы","научно-техническим прогрессом"],correct:0},
+{q:"Проблемы, связанные с ростом народонаселения, впервые поставил:",opts:["Т. Мальтус","Ф. Гальтон","Ж. П. Сартр","Г. Маркузе"],correct:0},
+{q:"Кто из футурологов считал, что информационное общество будет основано на всеобщих информационных связях, высокоэффективных экономических технологиях?",opts:["О. Тоффлер","Е. Масуда","Дж. Белл","Дж. Гэлбрейт"],correct:0},
+{q:"Система ценностных ориентаций, в основе которой лежит сострадание и любовь к ближнему:",opts:["альтруизм","гедонизм","утилитаризм","эвдемонизм"],correct:0},
+{q:"Как называется раздел философии, изучающий проблему происхождения человека?",opts:["антропология","онтология","антология","аксиология"],correct:0},
+{q:"Неповторимые черты индивида:",opts:["индивидуальность","субъект","человек","личность"],correct:0},
+{q:"Наивысшая степень духовного развития человека, представляющая собой устойчивую совокупность социально значимых качеств:",opts:["личность","человек","индивид","мыслитель"],correct:0},
+{q:"Сфера взаимодействия природы и общества, в границах которой разумная человеческая деятельность становится главным фактором развития:",opts:["ноосфера","биосфера","литосфера","атмосфера"],correct:0},
+{q:"Задача человека: всесторонне развивать все свои способности, сделать свой личный вклад в историю, в прогресс человечества:",opts:["смысл жизни","идеал","цель","эвдемонизм"],correct:0},
+{q:"Процесс усвоения индивидом определённой системы знаний, норм и ценностей — это:",opts:["социализация","политизация","интеллектуализация","информатизация"],correct:0},
+{q:"Формирование родовых свойств и качеств человечества — это:",opts:["филогенез","этногенез","биогенез","антропогенез"],correct:0},
+{q:"Понятие, отображающее общие черты, присущие всему человеческому роду:",opts:["человек","индивид","индивидуальность","личность"],correct:0},
+{q:"Что не входит в структуру личности?",opts:["агрессивная составляющая","духовная составляющая","физическая составляющая","социальная составляющая"],correct:0},
+{q:"Наследственная основа организма — это:",opts:["генотип","онтогенез","фенотип","генетический потенциал"],correct:0},
+{q:"Как называется наука, вырабатывающая практические рекомендации для решения глобальных проблем?",opts:["глобалистика","футурология","статистика","эврилогия"],correct:0},
+{q:"Что является особенностью современного этапа исторического развития?",opts:["усиление процессов глобализации во всех общественных сферах","технологизация во всех сферах общества","локализация во всех сферах","дезинтеграция во всех сферах"],correct:0},
+{q:"Наука, предлагающая прогнозы будущего:",opts:["футурология","эвристика","прогностика","глобалистика"],correct:0},
+{q:"Особое предвидение, отличающееся высокой степенью научной обоснованности, объективности в исследовании общественных процессов:",opts:["прогнозирование","интуиция","предвосхищение","предсказание"],correct:0},
+{q:"Методы прогнозирования:",opts:["экстраполяция, сценарий будущего","аксиоматический, системный","исторический, логический","описание, измерение"],correct:0},
+{q:"Высшая форма познания, логическое отражение действительности в понятиях, суждениях, умозаключениях есть:",opts:["мышление","рассудок","методология","логика"],correct:0},
+{q:"Рассуждение, построенное на подмене понятий, ложных доводах и посылках, называется:",opts:["софизм","силлогизм","сорит","умозаключение"],correct:0},
+{q:"Логика как наука:",opts:["изучает законы и формы мышления","исследует способы абстрактного мышления","имеет задачей приведение в порядок мышления","вырабатывает логические категории"],correct:0},
+{q:"Силлогизм — это:",opts:["форма умозаключения","логическая операция","логический приём","логическая форма"],correct:0},
+{q:"Какой логический закон выражает формула «A v не-А»?",opts:["закон исключённого третьего","закон противоречия","закон тождества","закон достаточного основания"],correct:0},
+{q:"Законы формальной логики — это:",opts:["законы правильного, непротиворечивого мышления","нормы правильного построения мыслей","принятые и утверждённые рамки дозволенного в мышлении","врождённые формы мышления"],correct:0},
+{q:"Перечислите законы формальной логики:",opts:["закон тождества, закон непротиворечия, закон исключённого третьего, закон достаточного основания","закон отрицания отрицания, закон взаимоперехода количественных и качественных изменений","закон тождества, закон единства и борьбы противоположностей","закон исключённого третьего, закон отрицания отрицания, закон непротиворечия"],correct:0},
+{q:"Какая из формул правильно выражает структуру данного суждения?",opts:["Некоторые S есть P","Это S есть P","Это S не есть P","Некоторые S не есть P"],correct:0},
+{q:"Какой формально-логический закон выражен формулой: А = А?",opts:["закон тождества","закон достаточного основания","закон непротиворечия","закон исключённого третьего"],correct:0},
+{q:"Какой логический закон выражает формула «A не есть не-А»?",opts:["закон противоречия","закон исключённого третьего","закон тождества","закон достаточного основания"],correct:0},
+{q:"Какая из формул правильно выражает структуру суждения «Студент Петров не сдал экзамен по философии»?",opts:["Это S не есть P","Это S есть P","Все S есть P","Некоторые S не есть P"],correct:0},
+{q:"Какая из формул правильно выражает структуру суждения «Никто из студентов нашей группы не имеет академической задолженности»?",opts:["Ни один S не есть P","Это S не есть P","Все S есть P","Некоторые S не есть P"],correct:0},
+{q:"Процесс мысленного выделения некоторого признака явления и отвлечения его от других есть:",opts:["абстрагирование","синтез","обобщение","сравнение"],correct:0},
+{q:"Что такое объём понятия?",opts:["это то множество явлений, к которому относится данное понятие","это совокупность признаков, отражающих общие свойства некоторого класса явлений","это фиксация общих признаков некоторого класса явлений","это установление сходства и различия между явлениями"],correct:0},
+{q:"Логический союз «тогда и только тогда, когда» применяется для образования:",opts:["суждений эквивалентности","импликативных суждений","дизъюнктивных суждений","конъюнктивных суждений"],correct:0},
+{q:"Определите вид суждения «Все адвокаты — юристы»:",opts:["простое общее утвердительное","простое частное утвердительное","простое единичное утвердительное","простое общее отрицательное"],correct:0},
+{q:"Определите вид суждения «Некоторые студенты занимаются спортом»:",opts:["простое частное утвердительное","простое общее отрицательное","простое единичное утвердительное","простое общее утвердительное"],correct:0},
+{q:"Определите вид суждения «Ни один человек не должен нарушать законы»:",opts:["простое общее отрицательное","простое частное отрицательное","простое единичное отрицательное","сложное общее отрицательное"],correct:0},
+{q:"Определите вид суждения «Некоторые музыканты — не пианисты»:",opts:["простое частное отрицательное","простое общее отрицательное","простое единичное отрицательное","простое частное утвердительное"],correct:0},
+{q:"Какой вариант содержит собирательные понятия?",opts:["хор, стая, коллектив, роща, мебель","семья, лошадь, программа, тетрадь","звезда, самолёт, бессонница, патриотизм","лес, книга, дерево, кино"],correct:0},
+{q:"Какие виды доказательства вы знаете?",opts:["прямое, косвенное","апагогическое, разделительное","индуктивное, дедуктивное","простое, сложное"],correct:0},
+{q:"Что такое тезис доказательства?",opts:["это положение, истинность или ложность которого надо доказать","это явление или событие, имевшее место в действительности","это положение, не требующее доказательства","это способ демонстрации"],correct:0},
+{q:"Какие признаки имеет правильное мышление?",opts:["определённость, непротиворечивость, последовательность, обоснованность","ясность, правильность, истинность","абстрактность, устойчивость, убедительность","элементарность, красноречивость, надёжность"],correct:0},
+{q:"Определите вариант, содержащий условное суждение:",opts:["если человек совершил преступление, то он должен быть наказан","каждый человек имеет право на труд","некоторые студенты занимаются спортом","Ташкент — столица Узбекистана"],correct:0},
+{q:"Суждения, которые приводятся для опровержения или подтверждения:",opts:["аргументами","тезисами","аксиомами","демонстрацией"],correct:0},
+{q:"Какой вариант состоит из отрицательных понятий?",opts:["беспорядок, беззаконие, неграмотность","учитель, несправедливость, хор","невежество, свобода, дерево","нерушимость, бесконечность, равенство"],correct:0},
+{q:"Какой вариант содержит собирательные понятия?",opts:["хор, коллектив, группа, стая, мебель","роща, дуэт, диван, карандаш","семья, программа, тетрадь, лошадь","союз, гимн, новость, дом"],correct:0},
+{q:"Что такое мораль?",opts:["это совокупность норм и правил поведения людей, одна из форм общественного сознания","это разнообразные настроения людей","это посланная Богом способность людей отличать хорошее от плохого","это критерий добра и зла"],correct:0},
+{q:"Укажите структурные элементы морали:",opts:["моральное сознание, моральное отношение, моральное поведение","моральная оценка, моральный идеал, моральный выбор","моральные принципы и нормы","моральные переживания, моральные ценности"],correct:0},
+{q:"Кто из античных мыслителей заложил основы этики?",opts:["Сократ, Аристотель, Демокрит, Эпикур","Фалес, Гераклит, Парменид, Протагор","Платон, Зенон, Анаксимен","Ксенофонт, Эмпедокл, Диоген"],correct:0},
+{q:"Эвдемонизм — это этическая система, в основе которой лежит стремление к:",opts:["счастью","совершенству","богатству","наслаждению"],correct:0},
+{q:"Система взглядов и поступков, в основе которой лежит стремление к пользе, называется:",opts:["утилитаризм","альтруизм","перфекционизм","гедонизм"],correct:0},
+{q:"Кто считал идею гуманизма одним из самых больших заблуждений человечества, формой идолопоклонства?",opts:["Н. Бердяев","В. Соловьёв","Гегель","И. Кант"],correct:0},
+{q:"Категория для обозначения сложного механизма внутренней нравственной регуляции поведения людей — это:",opts:["совесть","справедливость","достоинство","долг"],correct:0},
+{q:"Какая организация играет важную роль в деле воспитания молодёжи?",opts:["махалля","политические партии","ННО","средства массовой информации"],correct:0},
+{q:"Слово «мораль» происходит от латинского mores, что означает:",opts:["обычаи, нравы","традиции, ритуалы","воспитание","характер, природа"],correct:0},
+{q:"Перечислите основные категории этики:",opts:["добро и зло, честь, достоинство, долг, совесть, смысл жизни, любовь","добро и зло, верность, гуманизм, любовь","преданность, честь, принципиальность, трудолюбие","справедливость, долг, счастье, смысл жизни"],correct:0},
+{q:"Центральная категория эстетики — это:",opts:["прекрасное","возвышенное","красота","героическое"],correct:0},
+{q:"Кто ввёл в научный оборот термин «эстетика»?",opts:["А. Баумгартен","Лонгин","Платон","И. Кант"],correct:0},
+{q:"Какая категория эстетики непосредственно связана с категорией возвышенного?",opts:["героическое","сатирическое","прекрасное","комическое"],correct:0},
+{q:"Черно-белый жанр изобразительного искусства, основанный на линиях и штриховке — это:",opts:["графика","миниатюра","живопись","плакат"],correct:0},
+{q:"Вид искусства, связанный с бытом людей — это:",opts:["декоративно-прикладное искусство","авангардное искусство","монументальное искусство","классическое"],correct:0},
+{q:"Кому принадлежит идея: «В человеке всё должно быть прекрасным — и одежда, и душа, и лицо, и мысли»?",opts:["А.П. Чехов","Л.Н. Толстой","А.С. Пушкин","Ф.М. Достоевский"],correct:0},
+{q:"В каком жанре выполнены работы Камолиддина Бехзода, прозванного Рафаэлем Востока?",opts:["в жанре миниатюры","в жанре портрета","в жанре натюрморта","в жанре панорамы"],correct:0},
+{q:"Перечислите выдающихся представителей искусства эпохи Возрождения:",opts:["Шекспир, Да Винчи, Микеланджело, Рембрандт, Рафаэль","Софокл, Аристофан, Корнелий","К. Моне, Ван Гог, В. Гюго, Гейне","Роден, Гоген, А. Дюма, Э. Золя, Мольер, Бетховен"],correct:0},
+{q:"Какой вид художественной литературы передаёт внутренний эмоциональный настрой, переживания и настроение личности?",opts:["лирика","эпос","драма","фантастика"],correct:0},
+{q:"Какое свойство искусства является основным?",opts:["изобразительность","выразительность","идейность","зрелищность"],correct:0},
+{q:"Укажите правильную последовательность стадий развития системы:",opts:["соединение элементов в систему, возрастание возможностей, сокращение возможностей, распадение системы","сокращение возможностей, распадение системы, возрастание возможностей, соединение элементов","соединение элементов, сокращение возможностей, распадение системы, возрастание возможностей","сокращение возможностей, соединение элементов, распадение системы, возрастание возможностей"],correct:0},
+{q:"К явлениям применимо:",opts:["описание","объяснение","анализ","обобщение"],correct:0},
+{q:"Найдите верное определение свойства:",opts:["это способность объекта при взаимодействии с другими объектами порождать в них изменения и изменяться самому под их воздействием","последовательное изменение явления","внутренняя сторона, основание определённости","это внутреннее общее, относительно устойчивое, познаваемое мышлением основание явлений"],correct:0},
+{q:"Мера осуществимости некоторой возможности есть:",opts:["вероятность","действительность","случайность","реальность"],correct:0},
+{q:"Укажите правильную последовательность стадий развития:",opts:["возникновение, восходящая ветвь, нисходящая ветвь, исчезновение","восходящая ветвь, нисходящая ветвь, исчезновение, возникновение","нисходящая ветвь, исчезновение, возникновение, восходящая ветвь","возникновение, исчезновение, восходящая ветвь, нисходящая ветвь"],correct:3},
+{q:"Что такое развитие?",opts:["это необратимое качественное изменение действительности","это восхождение от простого к сложному","это закономерное изменение","это всякое изменение"],correct:0},
+{q:"Центральным понятием диалектики является:",opts:["развитие","прогресс","изменение","повторение"],correct:0},
+{q:"Суть этого метода состоит в смешении различных зачастую противоположных точек зрения, что мешает выделить главные. Укажите этот метод:",opts:["эклектика","метафизика","догматизм","софистика"],correct:0},
+{q:"Онтология Демокрита строится на принципе:",opts:["мир состоит из невидимых, неделимых частиц — атомов","первоэлементом мира является апейрон","любая вещь мира есть соединение материи и формы","первоэлементом мира является число"],correct:0},
+{q:"Число в пифагорейской школе — это:",opts:["первоначало мира, тождественное вещи","абстракция","творение бога","психическая иллюзия"],correct:0},
+{q:"Позднейший автор писал об этом философе: «Всё из воды, говорил он, и в воду всё разлагается»:",opts:["Фалес","Анаксимен","Эмпедокл","Платон"],correct:0},
+{q:"Этот античный мыслитель является основоположником атомизма:",opts:["Демокрит","Анаксимен","Аристотель","Платон"],correct:0},
+{q:"Фрагмент «Всё течёт, всё изменяется» выражает суть:",opts:["диалектических мыслей Гераклита","логики Аристотеля","метафизической концепции Парменида","критической позиции скептиков"],correct:0},
+{q:"Этот философ считал «человека мерой всех вещей»:",opts:["Протагор","Эпикур","Сократ","Ксенофан"],correct:0},
+{q:"Функцией философии, которая способствует формированию целостной картины мира, является:",opts:["мировоззренческая","гносеологическая","аксиологическая","критическая"],correct:0},
+{q:"Функция философии, объясняющая общественное бытие и способствующая его материальному и духовному изменению — это:",opts:["социальная","мифологическая","политологическая","гносеологическая"],correct:0},
+{q:"На что опирается философия?",opts:["на разум и объективные знания","на знания авторитетных источников","на эмпирические данные","на жизненный опыт людей"],correct:0},
+{q:"Специфика философских вопросов заключается в том, что они являются:",opts:["вечными","древними","конкретными","косвенными"],correct:0},
+{q:"Кому принадлежит высказывание: «Я утверждаю, что никаких вещей не существует. Есть только моё сознание с присущими ему ощущениями»?",opts:["субъективному идеалисту","объективному идеалисту","дуалисту","агностику"],correct:0},
+{q:"Функция философии, которая способствует выработке методов познания окружающей действительности, называется:",opts:["методологической","гуманистической","практической","прогностической"],correct:0},
+{q:"Функцией философии, которая имеет целью подвергать сомнению окружающий мир и существующее знание, является:",opts:["критическая","эстетическая","методологическая","мировоззренческая"],correct:0},
+{q:"Совокупность принципов, убеждений, определяющих направление деятельности и отношение к действительности — это:",opts:["мировоззрение","наука","мифология","картина мира"],correct:0},
+{q:"Что означает термин «онтология»?",opts:["учение о сущем","учение о познании","учение о человеке","учение о ценности"],correct:0},
+{q:"Философское направление, выводящее всё из одного духа, объясняющее возникновение материи из духа — это:",opts:["объективный идеализм","солипсизм","субъективный идеализм","деизм"],correct:0},
+{q:"Какое направление утверждает, что существует множество исходных оснований и начал бытия?",opts:["плюрализм","рационализм","идеализм","дуализм"],correct:0},
+{q:"Действительность, сфокусированная в сознании субъекта — это:",opts:["субъективная реальность","реальность подсознания","абсолютная реальность","бессознательное"],correct:0},
+{q:"Действительность, существующая вне человеческого сознания, называется:",opts:["объективной реальностью","интерсубъективной реальностью","субъективной реальностью","абсолютной реальностью"],correct:0},
+{q:"Совокупность объективной и субъективной реальности, материального и духовного, прошлого и будущего, жизни и смерти:",opts:["бытие","материя","субстанция","сущность"],correct:0},
+{q:"Философия природы, умозрительное истолкование природы, рассматриваемое в её целостности — это:",opts:["натурфилософия","физика","антропология","натурализм"],correct:0},
+{q:"Одна из высших форм существования материи, закономерно возникающая при определённых условиях; способ существования живых организмов и систем:",opts:["жизнь","вторая природа","ноосфера","ойкумена"],correct:0},
+{q:"Какой ответ на вопрос о том, что является источником познания, даёт рационалист?",opts:["разум","вера","интуиция","подсознание"],correct:0},
+{q:"Образ ранее воспринимаемого предмета или явления, а также образ, созданный воображением:",opts:["представление","фантазия","мечта","иллюзия"],correct:0},
+{q:"Согласие с каким утверждением означает агностицизм?",opts:["сущность вещей принципиально непознаваема","каждая вещь обладает противоположными качествами","человек есть мера всех вещей","только опыт даёт истинное знание"],correct:0},
+{q:"Что не относится к чувственным формам познания?",opts:["понятие","ощущение","восприятие","представление"],correct:0},
+{q:"Отражение объективной действительности в сознании человека в процессе его деятельности называется:",opts:["познание","фантазия","исследование","теория"],correct:0},
+{q:"Частичное, неполное знание об объекте — это:",opts:["относительная истина","гипотеза","субъективная истина","абсолютная истина"],correct:0},
+{q:"Какой из перечисленных методов не является эмпирическим?",opts:["абстрагирование","наблюдение","моделирование","шкалирование"],correct:0},
+{q:"Что не относится к формам научного познания?",opts:["мнение","закон","теория","теорема"],correct:0},
+{q:"Согласно М. Хайдеггеру и Ж.П. Сартру, бытие, направленное к ничто, и сознающее свою конечность — это:",opts:["экзистенция","мышление","переживание","движение материи"],correct:0},
+{q:"Фундаментальной характеристикой человеческого существования в экзистенциализме является:",opts:["свобода","вера","совесть","разум"],correct:0},
+{q:"Согласно психоанализу, культура человечества строится на:",opts:["сублимации первичных комплексов","снижении тревожности индивида","уменьшении чувства вины человека","стремлении к труду"],correct:0},
+{q:"Согласно учению З. Фрейда жизнь в целом и большинство конкретных поступков человека определяется:",opts:["бессознательным","разумом","рассудком","опытом"],correct:0},
+{q:"В философии А. Бергсона жизнь понимается как:",opts:["изменчивый, творческий поток сознания","процесс рационального, логического познания","система ощущений и чувств","совокупность животных и растительных форм"],correct:0},
+{q:"Представителем «философии жизни» является:",opts:["Ницше","Гегель","Шеллинг","Фихте"],correct:0},
+{q:"По К. Марксу, в основе развития общества лежит развитие:",opts:["производительных сил","мирового исторического процесса","взаимодействия бога и природы","взаимодействия бога и человека"],correct:0},
+{q:"Помимо явлений Кант выделяет:",opts:["«мир вещей в себе»","«мир чувств в себе»","«мир идей в себе»","«бога в себе»"],correct:0},
+{q:"В философском творчестве И. Канта выделяются периоды:",opts:["докритический и критический","логический и онтологический","рациональный и иррациональный","метафизический и диалектический"],correct:0},
+{q:"В системе Гегеля мировое развитие есть:",opts:["развитие духа (абсолютной идеи)","воплощение божественного замысла","процесс самоорганизации материи","Гегель отрицал развитие"],correct:0},
+{q:"Тип мировоззрения, согласно которому человек есть центр и высшая цель мироздания — это:",opts:["антропоцентризм","теоцентризм","гуманизм","натуроцентризм"],correct:0},
+{q:"Уподобление человеку, наделение человеческими свойствами предметов, явлений живой природы называется:",opts:["антропоморфизм","теоцентризм","натурализм","конструктивизм"],correct:0},
+{q:"Учение о человеке — это:",opts:["антропология","онтология","социология","антропософия"],correct:0},
+{q:"Что означает понятие «Ли» в философии Конфуция?",opts:["правило","достоинство","мудрость","добродетель"],correct:0},
+{q:"Какое понятие обозначало в даосизме основной закон бытия, вечное изменение мира?",opts:["Дао","увэй","джэнь","сяо"],correct:0},
+{q:"В зороастризме противопоставляются добро и зло, жизнь и смерть, ад и рай, свет и тьма. Что отражено в таких представлениях?",opts:["дуализм","монизм","плюрализм","синкретизм"],correct:0},
+{q:"Исходной формой и первоисточником культуры является:",opts:["человеческий труд","интеллектуальная деятельность","природный инстинкт","творчество"],correct:0},
+{q:"Материальная культура — это:",opts:["вся совокупность материальных благ, средства производства","совокупность всех знаний, все формы мышления","вся сфера мировоззрения","предметы, хранящиеся в музеях"],correct:0},
+{q:"Сознательный выбор личностью ценностей называется:",opts:["ценностной ориентацией","системой ценностей","культурным кодом","культурными универсалиями"],correct:0},
+{q:"Всё, чем обладает человек, чем он отличается от животных, является:",opts:["результатом его жизни в обществе","генетической предрасположенностью","результатом его самообразования","результатом естественного отбора"],correct:0},
+];
+
+// ═══════════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════════
+let selectedCount = 30;
+let session = [];          // shuffled indices
+let current = 0;           // current question index in session
+let answers = {};          // {sessionIdx: chosenOptIdx or null}
+let answered = {};         // {sessionIdx: true if answered}
+let correctCount = 0;
+let wrongCount  = 0;
+let timerSec = 0;
+let timerInterval = null;
+let finalTime = 0;
+
+// ─── SETUP ───
+document.querySelectorAll('.count-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.count-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    const v = parseInt(btn.dataset.val);
+    selectedCount = v;
+    document.getElementById('selectedCount').textContent = v;
+    document.getElementById('customCount').value = '';
+  });
+});
+
+document.getElementById('customCount').addEventListener('input', function() {
+  let v = parseInt(this.value);
+  if (isNaN(v) || v < 1) v = 1;
+  if (v > 200) v = 200;
+  selectedCount = v;
+  document.getElementById('selectedCount').textContent = v;
+  document.querySelectorAll('.count-btn').forEach(b => b.classList.remove('selected'));
+});
+
+function startQuiz() {
+  // Build shuffled session
+  const indices = Array.from({length: ALL_QUESTIONS.length}, (_, i) => i);
+  shuffle(indices);
+  session = indices.slice(0, Math.min(selectedCount, ALL_QUESTIONS.length));
+  current = 0;
+  answers = {};
+  answered = {};
+  correctCount = 0;
+  wrongCount = 0;
+  timerSec = 0;
+
+  showScreen('quiz');
+  renderQuestion();
+  startTimer();
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + id).classList.add('active');
+}
+
+// ─── TIMER ───
+function startTimer() {
+  clearInterval(timerInterval);
+  timerSec = 0;
+  timerInterval = setInterval(() => {
+    timerSec++;
+    document.getElementById('timerDisplay').textContent = formatTime(timerSec);
+  }, 1000);
+}
+
+function stopTimer() {
+  clearInterval(timerInterval);
+  finalTime = timerSec;
+}
+
+function formatTime(s) {
+  const m = Math.floor(s / 60);
+  const sec = s % 60;
+  return String(m).padStart(2,'0') + ':' + String(sec).padStart(2,'0');
+}
+
+// ─── RENDER QUESTION ───
+function renderQuestion() {
+  const total = session.length;
+  const qi = session[current];
+  const qData = ALL_QUESTIONS[qi];
+  const answered_this = answered[current];
+
+  // Progress
+  const done = Object.keys(answered).length;
+  const pct = Math.round((done / total) * 100);
+  document.getElementById('progressText').textContent = `Вопрос ${current + 1} из ${total}`;
+  document.getElementById('progressPct').textContent = pct + '%';
+  document.getElementById('progressFill').style.width = pct + '%';
+
+  document.getElementById('qNum').textContent = `Вопрос ${current + 1}`;
+  document.getElementById('qText').textContent = qData.q;
+
+  // Score
+  document.getElementById('scoreCorrect').textContent = correctCount;
+  document.getElementById('scoreWrong').textContent = wrongCount;
+
+  // Feedback
+  const fbArea = document.getElementById('feedbackArea');
+  if (answered_this) {
+    const chosen = answers[current];
+    const isCorrect = chosen === qData.correct;
+    fbArea.innerHTML = `<div class="feedback-badge ${isCorrect ? 'correct-fb' : 'wrong-fb'}">
+      ${isCorrect ? '✅ Правильно!' : '❌ Неверно'}
+    </div>`;
+  } else {
+    fbArea.innerHTML = '';
+  }
+
+  // Options
+  const list = document.getElementById('optionsList');
+  list.innerHTML = '';
+  const labels = ['А', 'Б', 'В', 'Г'];
+  qData.opts.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    if (answered_this) {
+      btn.classList.add('disabled');
+      if (i === qData.correct) btn.classList.add('correct');
+      else if (i === answers[current]) btn.classList.add('wrong');
+    }
+    btn.innerHTML = `<span class="opt-letter">${labels[i]}</span><span>${opt}</span>`;
+    if (!answered_this) {
+      btn.addEventListener('click', () => selectAnswer(i));
+    }
+    list.appendChild(btn);
+  });
+
+  // Nav buttons
+  document.getElementById('btnPrev').disabled = current === 0;
+  document.getElementById('btnNext').disabled = current === session.length - 1;
+}
+
+function selectAnswer(optIdx) {
+  if (answered[current]) return;
+  const qi = session[current];
+  const qData = ALL_QUESTIONS[qi];
+
+  answers[current] = optIdx;
+  answered[current] = true;
+
+  if (optIdx === qData.correct) correctCount++;
+  else wrongCount++;
+
+  renderQuestion();
+
+  // Auto-advance after short delay if not last question
+  if (current < session.length - 1) {
+    setTimeout(() => { goQuestion(1); }, 900);
+  }
+}
+
+function goQuestion(dir) {
+  const next = current + dir;
+  if (next < 0 || next >= session.length) return;
+  current = next;
+  renderQuestion();
+}
+
+function finishEarly() {
+  if (!confirm('Завершить тест досрочно?')) return;
+  finishQuiz();
+}
+
+function finishQuiz() {
+  stopTimer();
+  showScreen('results');
+  renderResults();
+}
+
+// Check if all answered
+function checkAllAnswered() {
+  if (Object.keys(answered).length >= session.length) {
+    setTimeout(finishQuiz, 600);
+  }
+}
+
+// Modified selectAnswer to check completion
+const origSelectAnswer = selectAnswer;
+function selectAnswer(optIdx) {
+  if (answered[current]) return;
+  const qi = session[current];
+  const qData = ALL_QUESTIONS[qi];
+  answers[current] = optIdx;
+  answered[current] = true;
+  if (optIdx === qData.correct) correctCount++;
+  else wrongCount++;
+  renderQuestion();
+  if (Object.keys(answered).length >= session.length) {
+    setTimeout(finishQuiz, 1200);
+  } else if (current < session.length - 1) {
+    setTimeout(() => { goQuestion(1); }, 900);
+  }
+}
+
+// ─── RESULTS ───
+function renderResults() {
+  const total = session.length;
+  const pct = Math.round((correctCount / total) * 100);
+  const skipped = total - Object.keys(answered).length;
+
+  document.getElementById('gradePct').textContent = pct + '%';
+  document.getElementById('statCorrect').textContent = correctCount;
+  document.getElementById('statWrong').textContent = wrongCount + (skipped > 0 ? ` (+${skipped} пропущено)` : '');
+  document.getElementById('statTime').textContent = formatTime(finalTime);
+
+  // Grade
+  let gradeClass, gradeText, gradeSub;
+  if (pct >= 90)      { gradeClass = 'excellent'; gradeText = '🎉 Отлично!';       gradeSub = 'Превосходный результат!'; }
+  else if (pct >= 70) { gradeClass = 'good';      gradeText = '👍 Хорошо';          gradeSub = 'Хороший результат!'; }
+  else if (pct >= 50) { gradeClass = 'fair';      gradeText = '😐 Удовлетворительно'; gradeSub = 'Есть над чем работать.'; }
+  else                { gradeClass = 'poor';      gradeText = '😞 Нужно повторить'; gradeSub = 'Изучите материал ещё раз.'; }
+
+  const titleEl = document.getElementById('resultTitle');
+  titleEl.textContent = gradeText;
+  titleEl.className = 'result-title ' + gradeClass;
+  document.getElementById('resultSub').textContent = gradeSub;
+
+  // Circle color
+  const circle = document.getElementById('gradeCircle');
+  const colors = { excellent: '#22c97c', good: '#9f99ff', fair: '#ffb347', poor: '#ff5767' };
+  circle.style.borderColor = colors[gradeClass];
+  circle.style.boxShadow = `0 0 40px ${colors[gradeClass]}44`;
+
+  // Review — only wrong answers
+  buildReview();
+}
+
+function buildReview() {
+  const list = document.getElementById('reviewList');
+  list.innerHTML = '';
+  const labels = ['А', 'Б', 'В', 'Г'];
+
+  let count = 0;
+  for (let i = 0; i < session.length; i++) {
+    const qi = session[i];
+    const qData = ALL_QUESTIONS[qi];
+    const chosen = answers[i];
+    if (chosen === undefined || chosen === qData.correct) continue;
+    count++;
+
+    const item = document.createElement('div');
+    item.className = 'review-item wrong-item';
+    item.innerHTML = `
+      <div class="review-q-num">Вопрос ${i + 1} из сессии</div>
+      <div class="review-q-text">${qData.q}</div>
+      <div class="review-answers">
+        <div class="review-ans your-wrong">✗ Ваш ответ: ${labels[chosen]}. ${qData.opts[chosen]}</div>
+        <div class="review-ans correct-ans">✓ Правильно: ${labels[qData.correct]}. ${qData.opts[qData.correct]}</div>
+      </div>
+    `;
+    list.appendChild(item);
+  }
+
+  if (count === 0) {
+    list.innerHTML = '<div style="text-align:center;color:var(--correct);padding:20px;font-family:Unbounded,sans-serif;font-size:13px;">🎉 Все ответы правильные!</div>';
+  }
+
+  const btn = document.querySelector('.review-toggle');
+  btn.querySelector('.review-toggle-label').textContent = `📋 Разбор ошибок (${count})`;
+}
+
+function toggleReview() {
+  const list = document.getElementById('reviewList');
+  const arrow = document.getElementById('reviewArrow');
+  list.classList.toggle('open');
+  arrow.classList.toggle('open');
+}
+
+function goSetup() {
+  stopTimer();
+  showScreen('setup');
+}
+
+function restartSame() {
+  startQuiz();
+}
+
+// ─── UTILITY ───
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+</script>
+</body>
+</html>
